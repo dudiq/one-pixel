@@ -1,0 +1,67 @@
+{
+  "name": "one-pixel-2d-engine",
+  "version": "2.0.0",
+  "main": "./dist/one-pixel.umd.js",
+  "module": "./dist/one-pixel.esm.js",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dudiq/one-pixel.git"
+  },
+  "files": [
+    "src",
+    "dist",
+    "tests"
+  ],
+  "author": "dudiq",
+  "bugs": {
+    "url": "https://github.com/dudiq/one-pixel/issues"
+  },
+  "homepage": "https://github.com/dudiq/one-pixel",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build:dev": "rollup -c",
+    "build": "rimraf ./dist && npm run build:lib",
+    "build:lib": "NODE_ENV=production rollup -c",
+    "test": "jest",
+    "format": "prettier --write './src/**/*.{js,json}' && eslint ./src/**/*.{js} --fix",
+    "commit": "git-cz"
+  },
+  "publishConfig": {
+    "tag": "latest"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "jr-broadcast": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/parser": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/runtime": "^7.3.4",
+    "@commitlint/cli": "^7.5.2",
+    "@commitlint/config-conventional": "^7.5.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.1.0",
+    "commitizen": "^3.0.7",
+    "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "jest": "^24.1.0",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.2.3",
+    "rollup-plugin-alias": "^1.5.1",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^9.2.1",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-plugin-replace": "^2.1.0",
+    "rollup-plugin-terser": "^4.0.4"
+  }
+}
