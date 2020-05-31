@@ -1,0 +1,13 @@
+.cache/*
+bundle/*
+preBundle/*
+cicd/*
+dist/*
+legacy/*
+reports/*
+resources/*
+retro/*
+shells/*
+sr/vendors/*
+*.langs.js
+babel.config.js

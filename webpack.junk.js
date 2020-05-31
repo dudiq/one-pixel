@@ -1,6 +1,6 @@
-// for correct detect paths in IDE
+/* eslint-disable */
 System.config({
   paths: {
-    '@/*': './src/scripts/*',
+    '@/*': './src/*',
   },
 });

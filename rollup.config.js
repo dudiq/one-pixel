@@ -10,7 +10,7 @@ import replace from 'rollup-plugin-replace';
 
 import pkg from './package.json';
 
-const { getEnv } = require('./env');
+// const { getEnv } = require('./env');
 
 function resolveDir(dir) {
   return path.join(__dirname, '', dir);
@@ -20,9 +20,9 @@ function resolveFile(file) {
   return path.resolve(__dirname, file);
 }
 
-const ENV = getEnv(process.env.NODE_ENV);
+// const ENV = getEnv(process.env.NODE_ENV);
 
-const withSourceMaps = process.env.NODE_ENV !== 'production';
+const withSourceMaps = true; // process.env.NODE_ENV !== 'production';
 
 const outputConf = {
   exports: 'named',
@@ -30,8 +30,8 @@ const outputConf = {
 };
 
 export default {
-  input: resolveFile('./src/index.js'),
-  external: [...Object.keys(pkg.dependencies)],
+  input: resolveFile('./src/one-pixel.js'),
+  // external: [...Object.keys(pkg.dependencies)],
   plugins: [
     json(),
     resolve({
@@ -42,13 +42,15 @@ export default {
       resolve: ['.js', '/index.js'],
     }),
     babel({
-      exclude: ['node_modules'],
-      runtimeHelpers: true,
+      // runtimeHelpers: true,
+      exclude: 'node_modules/**',
     }),
-    replace({
-      ENV: JSON.stringify(ENV),
+    // replace({
+    //   ENV: JSON.stringify(ENV),
+    // }),
+    commonjs({
+      include: /node_modules/,
     }),
-    commonjs(),
     !withSourceMaps && terser(),
   ],
   watch: {

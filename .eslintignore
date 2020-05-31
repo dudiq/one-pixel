@@ -1,0 +1,16 @@
+# /node_modules/* and /bower_components/* in the project root are ignored by default
+.cache/*
+.examples/*
+bundle/*
+preBundle/*
+cicd/*
+dist/*
+legacy/*
+reports/*
+resources/*
+retro/*
+shells/*
+src/vendors/*
+node_modules/*
+babel.config.js
+*.langs.js

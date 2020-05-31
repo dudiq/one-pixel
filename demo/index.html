@@ -1,0 +1,31 @@
+<html>
+<head>
+  <script src="../dist/one-pixel.umd.js"></script>
+</head>
+<body>
+  <canvas id="place"></canvas>
+
+<script>
+  const Pixel = window['one-pixel-2d'].default;
+  const instance = new Pixel('#place', {
+    penColor: 'red',
+    penWidth: 1,
+  });
+
+  instance.setData([
+    {
+      i: '1-uk2d', //id
+      t: 'l', //  l - line, c - curve, i - image
+      p: [1, 1, 200, 200] // points [x, y, x, y]...
+    },
+    {
+      i: '2-uk2d', //id
+      t: 'l', //  l - line, c - curve, i - image
+      p: [1, 1, 100, 150] // points [x, y, x, y]...
+    }
+  ]);
+
+  instance.startDraw();
+</script>
+</body>
+</html>
