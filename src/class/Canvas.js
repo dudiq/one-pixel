@@ -89,6 +89,9 @@ export default class Canvas {
     this.context = context;
     this.canvasElement = el;
 
+    el.width = context.config.width;
+    el.height = context.config.height;
+
     const ctx = el.getContext('2d');
     this.canvasContext = ctx;
     this.ctx = ctx;

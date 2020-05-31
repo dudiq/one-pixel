@@ -1,3 +1,5 @@
+import { NODE_TYPES } from '@/constants/nodeTypes';
+
 const data = [
   {
     i: '1-uk2d', // id
@@ -13,6 +15,12 @@ export default class Nodes {
   }
 
   addNodes(nodes) {
+    const images = this.context.images;
+    nodes.forEach(node => {
+      if (node.t === NODE_TYPES.NODE_IMAGE) {
+        images.addImage(node);
+      }
+    });
     this.nodes = nodes;
   }
 
