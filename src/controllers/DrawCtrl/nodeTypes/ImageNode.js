@@ -7,16 +7,20 @@ export default class ImageNode extends BaseNode {
     const imageMeta = context.images.getImageById(node.i);
     const points = node.p;
 
-    ctx.drawImage(
-      imageMeta.image,
-      0,
-      0,
-      imageMeta.width,
-      imageMeta.height,
-      points[0],
-      points[1],
-      points[2],
-      points[3],
-    );
+    if (points) {
+      ctx.drawImage(
+        imageMeta.image,
+        0,
+        0,
+        imageMeta.width,
+        imageMeta.height,
+        points[0],
+        points[1],
+        points[2],
+        points[3],
+      );
+    } else {
+      ctx.drawImage(imageMeta.image, 0, 0, imageMeta.width, imageMeta.height);
+    }
   }
 }

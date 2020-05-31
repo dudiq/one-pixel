@@ -8,6 +8,7 @@ export default class LineTo extends BaseNode {
 
     ctx.beginPath();
     ctx.lineWidth = config.penWidth;
+    ctx.lineCap = config.lineCap;
     ctx.moveTo(points[0], points[1]);
     ctx.lineTo(points[2], points[3]);
     ctx.strokeStyle = config.penColor;

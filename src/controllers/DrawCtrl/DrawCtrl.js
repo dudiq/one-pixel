@@ -1,4 +1,4 @@
-import { NODE_TYPES } from '@/constants/nodeTypes';
+import { NODE_TYPES } from '@/constants';
 
 import LineTo from './nodeTypes/LineTo';
 import ImageNode from './nodeTypes/ImageNode';
@@ -19,7 +19,7 @@ export default class DrawCtrl {
     };
   }
 
-  drawNode = (node, index) => {
+  drawNode = node => {
     const drawType = this.drawTypes[node.t];
     if (!drawType) {
       throw new Error(`not defined draw type ${drawType}`);

@@ -51,6 +51,8 @@ export default class Mouse {
     this.element.addEventListener('touchmove', this.onMouseMove, false);
     this.element.addEventListener('mouseup', this.onMouseEnd, false);
     this.element.addEventListener('touchend', this.onMouseEnd, false);
+    this.element.addEventListener('mouseleave', this.onMouseEnd, false);
+    this.element.addEventListener('touchleave', this.onMouseEnd, false);
   }
 
   removeEvents() {
@@ -60,6 +62,8 @@ export default class Mouse {
     this.element.removeEventListener('touchmove', this.onMouseMove, false);
     this.element.removeEventListener('mouseup', this.onMouseEnd, false);
     this.element.removeEventListener('touchend', this.onMouseEnd, false);
+    this.element.removeEventListener('mouseleave', this.onMouseEnd, false);
+    this.element.removeEventListener('touchleave', this.onMouseEnd, false);
   }
 
   destroy() {

@@ -1,12 +1,4 @@
-import { NODE_TYPES } from '@/constants/nodeTypes';
-
-const data = [
-  {
-    i: '1-uk2d', // id
-    t: 'i', //  m - move, l - line, c - curve, i - image
-    p: [1, 2], // points [x, y, x, y]...
-  },
-];
+import { NODE_TYPES } from '@/constants';
 
 export default class Nodes {
   constructor(context) {
