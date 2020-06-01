@@ -22,7 +22,7 @@ function resolveFile(file) {
 
 // const ENV = getEnv(process.env.NODE_ENV);
 
-const withSourceMaps = true; // process.env.NODE_ENV !== 'production';
+const withSourceMaps = process.env.NODE_ENV !== 'production';
 
 const outputConf = {
   exports: 'named',

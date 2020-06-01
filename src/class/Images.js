@@ -25,7 +25,14 @@ export default class Images {
     this.context.radio.trig(this.events.loaded);
   }
 
+  clearImages() {
+    this.images = {};
+    this.isLoaded = false;
+  }
+
   addImage(node) {
+    const id = node.i;
+    if (this.images[id]) return;
     const image = new Image();
 
     const meta = {
@@ -33,17 +40,19 @@ export default class Images {
       width: 0,
       height: 0,
     };
+    this.images[node.i] = meta;
     image.src = node.s;
     image.onload = () => {
+      if (!this.getImageById(id)) return;
       meta.width = image.width;
       meta.height = image.height;
       meta.isLoaded = true;
       this.processLoading();
     };
     image.onerror = () => {
+      if (!this.getImageById(id)) return;
       meta.isLoaded = true;
       this.processLoading();
     };
-    this.images[node.i] = meta;
   }
 }

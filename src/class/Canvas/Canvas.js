@@ -100,5 +100,16 @@ export default class Canvas {
     ctx.webkitImageSmoothingEnabled = false;
     ctx.msImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
+    trackTransforms(ctx);
+  }
+
+  clearCanvas() {
+    const ctx = this.canvasContext;
+    const p1 = ctx.transformedPoint(0, 0);
+    const p2 = ctx.transformedPoint(
+      this.canvasElement.width,
+      this.canvasElement.height,
+    );
+    ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
   }
 }

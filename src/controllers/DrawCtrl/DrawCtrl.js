@@ -2,6 +2,7 @@ import { NODE_TYPES } from '@/constants';
 
 import LineTo from './nodeTypes/LineTo';
 import ImageNode from './nodeTypes/ImageNode';
+import EraserNode from './nodeTypes/EraserNode';
 
 const PORTION_LENGTH = 2000;
 
@@ -16,6 +17,7 @@ export default class DrawCtrl {
     this.drawTypes = {
       [NODE_TYPES.NODE_LINE]: new LineTo(context),
       [NODE_TYPES.NODE_IMAGE]: new ImageNode(context),
+      [NODE_TYPES.NODE_ERASER]: new EraserNode(context),
     };
   }
 
@@ -42,6 +44,7 @@ export default class DrawCtrl {
   }
 
   startDraw() {
+    this.context.canvas.clearCanvas();
     clearTimeout(this.timerId);
     this.meta.currentIndex = 0;
     this.drawPortionsList();

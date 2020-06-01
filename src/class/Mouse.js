@@ -13,8 +13,9 @@ export default class Mouse {
   getPosition(ev) {
     let lastX;
     let lastY;
-    if (ev.touches) {
-      const evTouch = ev.touches[0];
+    const evTouch = (ev.changedTouches && ev.changedTouches[0])
+      || (ev.touches && ev.touches[0]);
+    if (evTouch) {
       lastX = Math.floor(evTouch.pageX - this.element.offsetLeft);
       lastY = Math.floor(evTouch.pageY - this.element.offsetTop);
     } else {

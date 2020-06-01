@@ -14,12 +14,12 @@ export default class PenTool extends BaseTool {
     this.points.push(point.x, point.y);
 
     const ctx = this.context.canvas.canvasContext;
-    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.strokeStyle = this.config.penColor;
-    ctx.lineWidth = this.config.penWidth;
-    ctx.lineCap = this.config.lineCap;
+
+    ctx.lineWidth = this.config.eraseWidth;
     ctx.moveTo(point.x, point.y);
+    this.renderErase(point);
   }
 
   onMouseMove(point) {
@@ -34,13 +34,17 @@ export default class PenTool extends BaseTool {
 
     this.points.push(point.x, point.y);
 
-    const ctx = this.context.canvas.canvasContext;
-    ctx.lineTo(point.x, point.y);
-    ctx.stroke();
+    this.renderErase(point);
   }
 
   onMouseEnd(point) {
     this.points.push(point.x, point.y);
+    const ctx = this.context.canvas.canvasContext;
+    this.renderErase(point);
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  renderErase(point) {
     const ctx = this.context.canvas.canvasContext;
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
@@ -50,7 +54,7 @@ export default class PenTool extends BaseTool {
   getNewNode() {
     return {
       i: this.getNewId(),
-      t: NODE_TYPES.NODE_LINE,
+      t: NODE_TYPES.NODE_ERASER,
       p: [...this.points],
     };
   }

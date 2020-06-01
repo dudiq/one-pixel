@@ -6,14 +6,21 @@ export default class Nodes {
     this.nodes = [];
   }
 
+  clearNodes() {
+    this.nodes.length = 0;
+  }
+
   addNodes(nodes) {
-    const images = this.context.images;
     nodes.forEach(node => {
-      if (node.t === NODE_TYPES.NODE_IMAGE) {
-        images.addImage(node);
-      }
+      this.addNode(node);
     });
-    this.nodes = nodes;
+  }
+
+  addNode(node) {
+    if (node.t === NODE_TYPES.NODE_IMAGE) {
+      this.context.images.addImage(node);
+    }
+    this.nodes.push(node);
   }
 
   processNodes(startIndex, processLength, cb) {

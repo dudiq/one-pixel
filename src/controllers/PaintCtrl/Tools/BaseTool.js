@@ -10,7 +10,15 @@ export default class BaseTool {
 
   onMouseEnd() {}
 
-  getPoints() {
-    return this.points;
+  getNewId() {
+    const length = this.context.nodes.nodes.length;
+    const uuid = this.context.config.uuid || 'un';
+    const date = new Date();
+    const lastId = `${date.getTime()}`.slice(6);
+    return `${length}-${uuid}-${lastId}`;
+  }
+
+  getNewNode() {
+    throw new Error('tool node is not implemented');
   }
 }

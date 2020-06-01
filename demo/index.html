@@ -1,21 +1,27 @@
+<!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script src="../dist/one-pixel.umd.js"></script>
 </head>
 <body>
-  <canvas id="place"></canvas>
+  <div>
+    <button id="reset">reset</button>
+    <button id="erase">eraser</button>
+    <button id="pen">pen</button>
+  </div>
+  <div>
+    <canvas id="place"></canvas>
+  </div>
 
 <script>
   const Pixel = window['one-pixel-2d'].default;
-  const instance = new Pixel('#place', {
-    penColor: 'red',
-    penWidth: 2,
-    lineCap: 'round',
-    width: 600,
-    height: 600,
-  });
+  const KEY = 'data-demo-one-pixel';
 
-  instance.setData([
+  const storedVal = localStorage.getItem(KEY);
+  const basicData = [
     {
       i: '3-ch',
       t: 'i',
@@ -32,9 +38,55 @@
       t: 'l', //  l - line, c - curve, i - image
       p: [1, 1, 100, 150] // points [x, y, x, y]...
     },
-  ]);
+  ];
+
+  let initialData = [...basicData];
+
+  try {
+    const parsedJson = JSON.parse(storedVal);
+    initialData = parsedJson.val;
+  } catch (e) {}
+
+  function saveData() {
+    const storeData = JSON.stringify({
+      val: initialData,
+    });
+    localStorage.setItem(KEY, storeData);
+  }
+
+  const instance = new Pixel('#place', {
+    penColor: 'red',
+    penWidth: 2,
+    eraseWidth: 8,
+    lineCap: 'round',
+    width: 600,
+    uuid: 'some-browser-id',
+    height: 600,
+    onAddNode(node){
+      console.log(node);
+      initialData.push(node);
+      saveData();
+    }
+  });
+
+  instance.setData(initialData);
 
   instance.startDraw();
+
+  document.querySelector('#reset').addEventListener('click', () => {
+    initialData = [...basicData];
+    instance.setData(initialData);
+    instance.startDraw();
+    saveData();
+  });
+
+  document.querySelector('#pen').addEventListener('click', () => {
+    instance.setTool('pen');
+  });
+
+  document.querySelector('#erase').addEventListener('click', () => {
+    instance.setTool('erase');
+  });
 </script>
 </body>
 </html>

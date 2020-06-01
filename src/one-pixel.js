@@ -8,6 +8,7 @@ import Images from '@/class/Images';
 import PaintCtrl from '@/controllers/PaintCtrl';
 import MoveCtrl from '@/controllers/MoveCtrl';
 import ScaleCtrl from '@/controllers/ScaleCtrl';
+import ConfigCtrl from '@/controllers/ConfigCtrl';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -33,10 +34,22 @@ export default class OnePixel {
       drawCtrl: new DrawCtrl(context),
       paintCtrl: new PaintCtrl(context),
     });
+
+    context.registerModules({
+      configCtrl: new ConfigCtrl(context),
+    });
   }
 
   setData(nodes) {
-    this.context.nodes.addNodes(nodes);
+    const context = this.context;
+    context.drawCtrl.stopDraw();
+    context.nodes.clearNodes();
+    context.images.clearImages();
+    context.nodes.addNodes(nodes);
+  }
+
+  setTool(toolName) {
+    this.context.paintCtrl.setTool(toolName);
   }
 
   startDraw() {
