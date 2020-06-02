@@ -9,7 +9,6 @@ import PaintCtrl from '@/controllers/PaintCtrl';
 import MoveCtrl from '@/controllers/MoveCtrl';
 import ScaleCtrl from '@/controllers/ScaleCtrl';
 import ConfigCtrl from '@/controllers/ConfigCtrl';
-import CommandCtrl from '@/controllers/CommandCtrl';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -35,7 +34,6 @@ export default class OnePixel {
       scaleCtrl: ScaleCtrl,
       drawCtrl: DrawCtrl,
       paintCtrl: PaintCtrl,
-      commandCtrl: CommandCtrl,
     });
 
     context.registerModules({

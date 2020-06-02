@@ -7,14 +7,30 @@
   <script src="../dist/one-pixel.umd.js"></script>
 </head>
 <body>
-  <div>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    height: 100%;
+  }
+  .container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .controls {
+    position: relative;
+  }
+</style>
+  <div class="container" id="place"></div>
+  <div class="controls">
     <button id="reset">reset</button>
     <button id="erase">eraser</button>
     <button id="pen">pen</button>
-    <button id="undo">undo</button>
-  </div>
-  <div>
-    <canvas id="place"></canvas>
   </div>
 
 <script>
@@ -60,9 +76,7 @@
     penWidth: 2,
     eraseWidth: 8,
     lineCap: 'round',
-    width: 600,
     uuid: 'some-browser-id',
-    height: 600,
     onAddNode(node){
       console.log(node);
       initialData.push(node);
@@ -87,10 +101,6 @@
 
   document.querySelector('#erase').addEventListener('click', () => {
     instance.setTool('erase');
-  });
-
-  document.querySelector('#undo').addEventListener('click', () => {
-    instance.undo();
   });
 </script>
 </body>

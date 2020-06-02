@@ -1,4 +1,5 @@
-import intersects from 'intersects';
+import boxBox from 'intersects/box-box';
+import polygonBox from 'intersects/polygon-box';
 
 export default class CrossingRulers {
   constructor(context) {
@@ -12,7 +13,7 @@ export default class CrossingRulers {
     const nodeBbox = this.context.bbox.getBboxById(node.i);
     if (!nodeBbox) return false;
     if (
-      !intersects.boxBox(
+      !boxBox(
         clip.minx,
         clip.miny,
         clip.w,
@@ -23,6 +24,6 @@ export default class CrossingRulers {
         nodeBbox.h,
       )
     ) return false;
-    return intersects.polygonBox(points, clip.minx, clip.miny, clip.w, clip.h);
+    return polygonBox(points, clip.minx, clip.miny, clip.w, clip.h);
   }
 }

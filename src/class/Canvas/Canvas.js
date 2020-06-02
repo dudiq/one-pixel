@@ -88,12 +88,13 @@ export default class Canvas {
   constructor(context) {
     this.context = context;
     const el = context.element;
-    this.canvasElement = el;
+    const canvas = document.createElement('canvas');
+    this.canvasElement = canvas;
+    this.setSize(el.clientWidth, el.clientHeight);
 
-    el.width = context.config.width;
-    el.height = context.config.height;
+    el.appendChild(canvas);
 
-    const ctx = el.getContext('2d');
+    const ctx = canvas.getContext('2d');
     this.canvasContext = ctx;
     this.ctx = ctx;
 
@@ -102,6 +103,11 @@ export default class Canvas {
     ctx.msImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
     trackTransforms(ctx);
+  }
+
+  setSize(w, h) {
+    this.canvasElement.width = w;
+    this.canvasElement.height = h;
   }
 
   clearCanvas() {
@@ -113,4 +119,6 @@ export default class Canvas {
     );
     ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
   }
+
+  destroy() {}
 }

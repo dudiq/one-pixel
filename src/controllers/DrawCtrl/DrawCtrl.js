@@ -19,6 +19,8 @@ export default class DrawCtrl {
       [NODE_TYPES.NODE_IMAGE]: new ImageNode(context),
       [NODE_TYPES.NODE_REMOVE]: new BaseNode(context),
     };
+
+    window.addEventListener('resize', this.onResize, false);
   }
 
   drawNode = node => {
@@ -56,5 +58,32 @@ export default class DrawCtrl {
 
   stopDraw() {
     clearTimeout(this.timerId);
+  }
+
+  onResize = () => {
+    const element = this.context.element;
+    const canvasElement = this.context.canvas.canvasElement;
+    if (
+      element.clientWidth === canvasElement.width
+      && canvasElement.height === element.clientHeight
+    ) {
+      return;
+    }
+
+    // const ctx = this.canvasContext;
+    // ctx.translate(offset.x, offset.y);
+    // const scaleVal = scale.val;
+    // const normalScale = 1 / scaleVal;
+    // ctx.scale(normalScale, normalScale);
+
+    this.context.canvas.setSize(element.clientWidth, element.clientHeight);
+
+    // ctx.scale(scaleVal, scaleVal);
+    // ctx.translate(-offset.x, -offset.y);
+    this.redraw();
+  };
+
+  destroy() {
+    window.removeEventListener('resize', this.onResize, false);
   }
 }
