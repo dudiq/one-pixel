@@ -9,6 +9,7 @@ import PaintCtrl from '@/controllers/PaintCtrl';
 import MoveCtrl from '@/controllers/MoveCtrl';
 import ScaleCtrl from '@/controllers/ScaleCtrl';
 import ConfigCtrl from '@/controllers/ConfigCtrl';
+import CommandCtrl from '@/controllers/CommandCtrl';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -16,28 +17,32 @@ export default class OnePixel {
     const element = document.querySelector(elementId);
     const context = new Context({
       config,
+      element,
       radio: radio('core:one-pixel'),
     });
 
     this.context = context;
 
     context.registerModules({
-      canvas: new Canvas(context, element),
-      mouse: new Mouse(context, element),
-      nodes: new Nodes(context),
-      images: new Images(context),
+      canvas: Canvas,
+      mouse: Mouse,
+      nodes: Nodes,
+      images: Images,
     });
 
     context.registerModules({
-      moveCtrl: new MoveCtrl(context),
-      scaleCtrl: new ScaleCtrl(context),
-      drawCtrl: new DrawCtrl(context),
-      paintCtrl: new PaintCtrl(context),
+      moveCtrl: MoveCtrl,
+      scaleCtrl: ScaleCtrl,
+      drawCtrl: DrawCtrl,
+      paintCtrl: PaintCtrl,
+      commandCtrl: CommandCtrl,
     });
 
     context.registerModules({
-      configCtrl: new ConfigCtrl(context),
+      configCtrl: ConfigCtrl,
     });
+
+    context.init();
   }
 
   setData(nodes) {
@@ -45,17 +50,25 @@ export default class OnePixel {
     context.drawCtrl.stopDraw();
     context.nodes.clearNodes();
     context.images.clearImages();
-    context.nodes.addNodes(nodes);
+    context.nodes.setNodes(nodes);
   }
 
   setTool(toolName) {
     this.context.paintCtrl.setTool(toolName);
   }
 
+  undo() {
+    this.context.commandCtrl.undo();
+  }
+
+  redo() {
+    this.context.commandCtrl.redo();
+  }
+
   startDraw() {
     // wait images loaded
     if (!this.context.images.isLoaded) {
-      this.context.radio.one(this.context.images.events.loaded, () => {
+      this.context.radio.one(this.context.images.events.onLoaded, () => {
         this.startDraw();
       });
       return;

@@ -1,20 +1,35 @@
+const CLIP_WIDTH = 3;
+
 export default class Mouse {
-  constructor(context, element) {
+  constructor(context) {
     this.context = context;
+    const element = context.element;
     this.element = element;
     this.events = context.radio.events('mouse', {
       start: 'start',
       stop: 'stop',
       move: 'move',
     });
+    this.currentPoint = {
+      x: 0,
+      y: 0,
+    };
+    this.currentClip = {};
     this.addEvents(element);
   }
 
-  getPosition(ev) {
+  init() {
+    this.currentClip = this.context.bbox.createBbox();
+    this.currentClip.w = CLIP_WIDTH * 2;
+    this.currentClip.h = CLIP_WIDTH * 2;
+  }
+
+  updateCurrentPoint(ev) {
     let lastX;
     let lastY;
     const evTouch = (ev.changedTouches && ev.changedTouches[0])
       || (ev.touches && ev.touches[0]);
+
     if (evTouch) {
       lastX = Math.floor(evTouch.pageX - this.element.offsetLeft);
       lastY = Math.floor(evTouch.pageY - this.element.offsetTop);
@@ -23,26 +38,28 @@ export default class Mouse {
       lastY = ev.offsetY || ev.pageY - this.element.offsetTop;
     }
 
-    return {
-      x: lastX,
-      y: lastY,
-    };
+    const currentClip = this.currentClip;
+    currentClip.minx = lastX - CLIP_WIDTH;
+    currentClip.maxx = lastX + CLIP_WIDTH;
+    currentClip.miny = lastY - CLIP_WIDTH;
+    currentClip.maxy = lastY + CLIP_WIDTH;
+    this.currentPoint.x = lastX;
+    this.currentPoint.y = lastY;
   }
 
   onMouseStart = ev => {
-    const point = this.getPosition(ev);
-    this.context.radio.trig(this.events.start, point);
+    this.updateCurrentPoint(ev);
+    this.context.radio.trig(this.events.start, this.currentPoint);
   };
 
   onMouseMove = ev => {
-    const point = this.getPosition(ev);
-
-    this.context.radio.trig(this.events.move, point);
+    this.updateCurrentPoint(ev);
+    this.context.radio.trig(this.events.move, this.currentPoint);
   };
 
   onMouseEnd = ev => {
-    const point = this.getPosition(ev);
-    this.context.radio.trig(this.events.stop, point);
+    this.updateCurrentPoint(ev);
+    this.context.radio.trig(this.events.stop, this.currentPoint);
   };
 
   addEvents() {

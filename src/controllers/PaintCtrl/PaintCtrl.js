@@ -1,4 +1,3 @@
-import { PAINT_MODE_TYPES } from '@/constants';
 import BaseTool from './Tools/BaseTool';
 import PenTool from './Tools/PenTool';
 import EraseTool from './Tools/EraseTool';
@@ -8,9 +7,8 @@ import EraseTool from './Tools/EraseTool';
 export default class PaintCtrl {
   constructor(context) {
     this.context = context;
-    this.mode = PAINT_MODE_TYPES.PAINT;
     this.events = context.radio.events('paintCtrl', {
-      addNode: 'addNode',
+      onAddNode: 'onAddNode',
     });
 
     this.tools = {
@@ -58,15 +56,18 @@ export default class PaintCtrl {
 
   onMouseEnd = point => {
     if (!this.isClicked) return;
-    this.tool.onMouseEnd(point);
-    const node = this.tool.getNewNode();
-
-    this.context.nodes.addNode(node);
-    this.context.radio.trig(this.events.addNode, node);
     this.isClicked = false;
+    this.tool.onMouseEnd(point);
+    this.handleTool();
   };
 
-  switchMode(mode) {
-    this.mode = mode;
+  handleTool() {
+    const node = this.tool.getNewNode();
+    if (node) {
+      this.context.nodes.addNode(node);
+      this.context.nodes.clearRemoved();
+      this.context.radio.trig(this.events.onAddNode, node);
+    }
+    this.context.drawCtrl.redraw();
   }
 }

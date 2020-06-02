@@ -19,6 +19,6 @@ export default class BaseTool {
   }
 
   getNewNode() {
-    throw new Error('tool node is not implemented');
+    return null;
   }
 }

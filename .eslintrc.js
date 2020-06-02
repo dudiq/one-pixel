@@ -15,8 +15,6 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
       modules: true,
-      generators: true,
-      legacyDecorators: true,
     },
   },
   settings: {
@@ -28,6 +26,7 @@ module.exports = {
     },
   },
   rules: {
+    'no-continue': 'off',
     'arrow-parens': ['error', 'as-needed'],
     'prefer-destructuring': 'off',
     'class-methods-use-this': 'off',

@@ -85,8 +85,9 @@ function trackTransforms(ctx, bbox) {
 }
 
 export default class Canvas {
-  constructor(context, el) {
+  constructor(context) {
     this.context = context;
+    const el = context.element;
     this.canvasElement = el;
 
     el.width = context.config.width;

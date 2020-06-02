@@ -1,7 +1,9 @@
-export default class BaseNode {
+export default class CommandCtrl {
   constructor(context) {
     this.context = context;
   }
 
-  render() {}
+  redo() {}
+
+  undo() {}
 }

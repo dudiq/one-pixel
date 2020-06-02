@@ -4,7 +4,7 @@ export default class Images {
     this.images = {};
     this.isLoaded = false;
     this.events = context.radio.events('images', {
-      loaded: 'loaded',
+      onLoaded: 'onLoaded',
     });
   }
 
@@ -22,7 +22,7 @@ export default class Images {
 
     this.isLoaded = true;
 
-    this.context.radio.trig(this.events.loaded);
+    this.context.radio.trig(this.events.onLoaded);
   }
 
   clearImages() {

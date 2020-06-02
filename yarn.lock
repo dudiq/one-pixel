@@ -3436,6 +3436,11 @@ inquirer@^7.0.0:
     strip-ansi "^6.0.0"
     through "^2.3.6"
 
+intersects@^2.7.2:
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/intersects/-/intersects-2.7.2.tgz#a3147de29034a8853b0c4dfe1a14d628678828d7"
+  integrity sha512-/LtLDq40iFtvnjhouev9p2R+jP+raVONPiD1t8Mcj879pkrLiav99BTRPBkfMPwSYr5vTNws3USGoW+8usS45A==
+
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"

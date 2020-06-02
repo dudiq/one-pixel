@@ -4,7 +4,7 @@ export default class ConfigCtrl {
 
     const config = context.config;
 
-    context.radio.on(context.paintCtrl.events.addNode, node => {
+    context.radio.on(context.paintCtrl.events.onAddNode, node => {
       config.onAddNode && config.onAddNode(node);
     });
   }
