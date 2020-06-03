@@ -1,7 +1,10 @@
 import { NODE_TYPES } from '@/constants';
 import BaseTool from './BaseTool';
 
-export default class PenTool extends BaseTool {
+const CLIP_WIDTH = 6;
+const CLIP_WIDTH_HALF = CLIP_WIDTH / 2;
+
+export default class EraseTool extends BaseTool {
   constructor(context) {
     super(context);
     this.config = context.config;
@@ -21,21 +24,19 @@ export default class PenTool extends BaseTool {
   }
 
   eraseNode() {
-    const clip = this.context.mouse.currentClip;
-    const node = this.context.nodes.findCrossedByClip(clip);
-    if (node) {
-      this.currentNodeId = node.i;
-      this.context.paintCtrl.handleTool();
-      this.currentNodeId = '';
-    }
-  }
+    const context = this.context;
+    const point = this.getPoint(context.mouse.currentPoint);
+    const x = point.x - CLIP_WIDTH_HALF;
+    const y = point.y - CLIP_WIDTH_HALF;
+    const node = context.nodes.findCrossedByPoint(x, y, CLIP_WIDTH);
+    if (!node) return;
 
-  getNewNode() {
-    if (!this.currentNodeId) return null;
-    return {
+    context.paintCtrl.createNewNode({
       i: this.getNewId(),
       t: NODE_TYPES.NODE_REMOVE,
-      v: this.currentNodeId,
-    };
+      v: node.i,
+    });
+
+    this.context.drawCtrl.redraw();
   }
 }

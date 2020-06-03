@@ -48,13 +48,13 @@ export default class Nodes {
     this.nodes.push(node);
   }
 
-  findCrossedByClip(clip) {
+  findCrossedByPoint(x, y, dimension) {
     const nodes = this.nodes;
     let ret;
     for (let i = nodes.length - 1; i >= 0; i--) {
       const node = nodes[i];
       if (!NODE_AVAILABLE_SELECT[node.t]) continue;
-      if (this.context.crossingRulers.isClipCrossNode(clip, node)) {
+      if (this.context.crossingRulers.isPointCrossNode(x, y, node, dimension)) {
         ret = node;
         break;
       }

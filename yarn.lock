@@ -6340,6 +6340,11 @@ tr46@^2.0.2:
   dependencies:
     punycode "^2.1.1"
 
+transformation-matrix@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/transformation-matrix/-/transformation-matrix-2.3.0.tgz#568a0be8698c204efbfc799516b8714a6e4708de"
+  integrity sha512-iXgfTkswsqHyG3SzL04mfniI4z6/XUDBiWmMv/+YSDFIjoF4Ugy3AwkoL8ed+cCak1uLfb70wQbIkATNS6fgPA==
+
 trim-newlines@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/trim-newlines/-/trim-newlines-2.0.0.tgz#b403d0b91be50c331dfc4b82eeceb22c3de16d20"

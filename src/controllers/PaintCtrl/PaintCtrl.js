@@ -58,16 +58,14 @@ export default class PaintCtrl {
     if (!this.isClicked) return;
     this.isClicked = false;
     this.tool.onMouseEnd(point);
-    this.handleTool();
+    this.context.drawCtrl.redraw();
   };
 
-  handleTool() {
-    const node = this.tool.getNewNode();
-    if (node) {
-      this.context.nodes.addNode(node);
-      this.context.nodes.clearRemoved();
-      this.context.radio.trig(this.events.onAddNode, node);
-    }
-    this.context.drawCtrl.redraw();
+  createNewNode(node) {
+    if (!node) return;
+
+    this.context.nodes.addNode(node);
+    this.context.nodes.clearRemoved();
+    this.context.radio.trig(this.events.onAddNode, node);
   }
 }

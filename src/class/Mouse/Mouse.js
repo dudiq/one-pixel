@@ -1,4 +1,12 @@
-const CLIP_WIDTH = 3;
+function getWindowScrollX() {
+  const ret = window.scrollX || window.pageXOffset || document.documentElement.scrollLeft;
+  return ret;
+}
+
+function getWindowScrollY() {
+  const ret = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+  return ret;
+}
 
 export default class Mouse {
   constructor(context) {
@@ -13,38 +21,30 @@ export default class Mouse {
     this.currentPoint = {
       x: 0,
       y: 0,
+      totalTouches: 0,
     };
     this.currentClip = {};
     this.addEvents(element);
   }
 
-  init() {
-    this.currentClip = this.context.bbox.createBbox();
-    this.currentClip.w = CLIP_WIDTH * 2;
-    this.currentClip.h = CLIP_WIDTH * 2;
-  }
-
   updateCurrentPoint(ev) {
     let lastX;
     let lastY;
-    const evTouch = (ev.changedTouches && ev.changedTouches[0])
-      || (ev.touches && ev.touches[0]);
+    const touches = ev.changedTouches || ev.touches;
+    const evTouch = touches && touches[0];
 
     if (evTouch) {
-      lastX = Math.floor(evTouch.pageX - this.element.offsetLeft);
-      lastY = Math.floor(evTouch.pageY - this.element.offsetTop);
+      lastX = Math.floor(evTouch.pageX);
+      lastY = Math.floor(evTouch.pageY);
     } else {
-      lastX = ev.offsetX || ev.pageX - this.element.offsetLeft;
-      lastY = ev.offsetY || ev.pageY - this.element.offsetTop;
+      lastX = ev.offsetX || ev.pageX;
+      lastY = ev.offsetY || ev.pageY;
     }
 
-    const currentClip = this.currentClip;
-    currentClip.minx = lastX - CLIP_WIDTH;
-    currentClip.maxx = lastX + CLIP_WIDTH;
-    currentClip.miny = lastY - CLIP_WIDTH;
-    currentClip.maxy = lastY + CLIP_WIDTH;
     this.currentPoint.x = lastX;
     this.currentPoint.y = lastY;
+    // this.currentPoint.totalTouches = touches.length;
+    // console.log(touches.length);
   }
 
   onMouseStart = ev => {

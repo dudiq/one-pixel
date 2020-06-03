@@ -11,7 +11,7 @@ export default class DrawCtrl {
     this.context = context;
     this.timerId = null;
     this.meta = {
-      currentIndex: 0,
+      currentDrawNodeIndex: 0,
     };
 
     this.drawTypes = {
@@ -34,7 +34,7 @@ export default class DrawCtrl {
 
   asyncDrawPortion = () => {
     this.context.nodes.processNodes(
-      this.meta.currentIndex,
+      this.meta.currentDrawNodeIndex,
       PORTION_LENGTH,
       this.drawNode,
     );
@@ -46,9 +46,15 @@ export default class DrawCtrl {
   }
 
   startDraw() {
-    this.context.canvas.clearCanvas();
+    const react = this.context.transformCtrl.getClearRect(
+      0,
+      0,
+      this.context.element.clientWidth,
+      this.context.element.clientHeight,
+    );
+    this.context.canvas.clearCanvas(react.p1, react.p2);
     clearTimeout(this.timerId);
-    this.meta.currentIndex = 0;
+    this.meta.currentDrawNodeIndex = 0;
     this.drawPortionsList();
   }
 

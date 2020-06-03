@@ -6,7 +6,7 @@ export default class CrossingRulers {
     this.context = context;
   }
 
-  isClipCrossNode(clip, node) {
+  isPointCrossNode(x, y, node, dimension = 1) {
     const points = node.p;
     if (!points) return false;
 
@@ -14,16 +14,16 @@ export default class CrossingRulers {
     if (!nodeBbox) return false;
     if (
       !boxBox(
-        clip.minx,
-        clip.miny,
-        clip.w,
-        clip.h,
+        x,
+        y,
+        dimension,
+        dimension,
         nodeBbox.minx,
         nodeBbox.miny,
         nodeBbox.w,
         nodeBbox.h,
       )
     ) return false;
-    return polygonBox(points, clip.minx, clip.miny, clip.w, clip.h);
+    return polygonBox(points, x, y, dimension, dimension);
   }
 }

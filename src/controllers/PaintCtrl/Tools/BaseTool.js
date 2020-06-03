@@ -4,6 +4,10 @@ export default class BaseTool {
     this.points = [];
   }
 
+  getPoint(point) {
+    return this.context.transformCtrl.getTransPoint(point);
+  }
+
   onMouseStart(point) {}
 
   onMouseMove(point) {}
@@ -16,9 +20,5 @@ export default class BaseTool {
     const date = new Date();
     const lastId = `${date.getTime()}`.slice(6);
     return `${length}-${uuid}-${lastId}`;
-  }
-
-  getNewNode() {
-    return null;
   }
 }

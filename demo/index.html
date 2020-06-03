@@ -31,6 +31,8 @@
     <button id="reset">reset</button>
     <button id="erase">eraser</button>
     <button id="pen">pen</button>
+    <button id="zoomin">+</button>
+    <button id="zoomout">-</button>
   </div>
 
 <script>
@@ -101,6 +103,19 @@
 
   document.querySelector('#erase').addEventListener('click', () => {
     instance.setTool('erase');
+  });
+
+  let scale = 1;
+  document.querySelector('#zoomin').addEventListener('click', () => {
+    scale += 0.1;
+    instance.context.transformCtrl.scale(scale);
+    instance.context.drawCtrl.redraw();
+  });
+
+  document.querySelector('#zoomout').addEventListener('click', () => {
+    scale -= 0.1;
+    instance.context.transformCtrl.scale(scale);
+    instance.context.drawCtrl.redraw();
   });
 </script>
 </body>
