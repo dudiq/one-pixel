@@ -1,6 +1,7 @@
 import {
   scale,
-  rotate,
+  // TODO: add degree rotation
+  rotateDEG,
   translate,
   identity,
   inverse,
@@ -14,10 +15,21 @@ export default class TransformsCtrl {
 
     this.setMatrix(identity());
 
-    this.meta = {
+    /**
+     * @private
+     * @type {{x: number, y: number}}
+     */
+    this.metaOffset = {
       x: 0,
       y: 0,
-      scale: 0,
+    };
+
+    /**
+     * @private
+     * @type {{scale: number}}
+     */
+    this.metaScale = {
+      scale: 1,
     };
   }
 
@@ -30,24 +42,35 @@ export default class TransformsCtrl {
   }
 
   offset(x, y) {
-    this.meta.x = x;
-    this.meta.y = y;
-    // offset(x, y) {
-    //   this.matrix = compose(identity(), translate(x, y));
-    //   this.setTransform(this.matrix);
-    // }
+    if (x === undefined || y === undefined) return this.metaOffset;
+    this.metaOffset.x = x;
+    this.metaOffset.y = y;
+    this.transform(x, y, this.metaScale.scale);
+    return this.metaOffset;
   }
 
-  scale(val, x = 0, y = 0) {
-    this.meta.scale = val;
-    const matrix = compose(identity(), scale(val, val));
-    this.setMatrix(matrix);
+  scale(val) {
+    if (val === undefined) return this.metaScale.scale;
+
+    this.metaScale.scale = val;
+    const offset = this.metaOffset;
+    this.transform(offset.x, offset.y, val);
+    return this.metaScale.scale;
   }
 
   setMatrix(matrix) {
     this.matrix = matrix;
     this.inverse = inverse(this.matrix);
     this.context.canvas.setTransform(matrix);
+  }
+
+  transform(x, y, scaleVal) {
+    const matrix = compose(
+      identity(),
+      translate(x, y),
+      scale(scaleVal, scaleVal),
+    );
+    this.setMatrix(matrix);
   }
 
   getClearRect(x, y, w, h) {

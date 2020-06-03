@@ -46,13 +46,13 @@ export default class DrawCtrl {
   }
 
   startDraw() {
-    const react = this.context.transformCtrl.getClearRect(
+    const rect = this.context.transformCtrl.getClearRect(
       0,
       0,
       this.context.element.clientWidth,
       this.context.element.clientHeight,
     );
-    this.context.canvas.clearCanvas(react.p1, react.p2);
+    this.context.canvas.clearCanvas(rect.p1, rect.p2);
     clearTimeout(this.timerId);
     this.meta.currentDrawNodeIndex = 0;
     this.drawPortionsList();
@@ -76,16 +76,12 @@ export default class DrawCtrl {
       return;
     }
 
-    // const ctx = this.canvasContext;
-    // ctx.translate(offset.x, offset.y);
-    // const scaleVal = scale.val;
-    // const normalScale = 1 / scaleVal;
-    // ctx.scale(normalScale, normalScale);
-
+    const offset = this.context.transformCtrl.offset();
+    const scale = this.context.transformCtrl.scale();
+    this.context.transformCtrl.transform(0, 0, 1);
     this.context.canvas.setSize(element.clientWidth, element.clientHeight);
+    this.context.transformCtrl.transform(offset.x, offset.y, scale);
 
-    // ctx.scale(scaleVal, scaleVal);
-    // ctx.translate(-offset.x, -offset.y);
     this.redraw();
   };
 

@@ -12,9 +12,11 @@
     margin: 0;
     padding: 0;
   }
+
   body {
     height: 100%;
   }
+
   .container {
     position: absolute;
     top: 0;
@@ -22,18 +24,23 @@
     right: 0;
     bottom: 0;
   }
+
   .controls {
     position: relative;
   }
 </style>
-  <div class="container" id="place"></div>
-  <div class="controls">
-    <button id="reset">reset</button>
-    <button id="erase">eraser</button>
-    <button id="pen">pen</button>
-    <button id="zoomin">+</button>
-    <button id="zoomout">-</button>
-  </div>
+<div class="container" id="place"></div>
+<div class="controls">
+  <button id="reset">reset</button>
+  <button id="erase">eraser</button>
+  <button id="pen">pen</button>
+  <button id="zoomin">+</button>
+  <button id="zoomout">-</button>
+  <button id="moveright">-></button>
+  <button id="moveleft"><-</button>
+  <button id="movetop">^</button>
+  <button id="movebottom">_</button>
+</div>
 
 <script>
   const Pixel = window['one-pixel-2d'].default;
@@ -64,7 +71,8 @@
   try {
     const parsedJson = JSON.parse(storedVal);
     initialData = parsedJson.val;
-  } catch (e) {}
+  } catch (e) {
+  }
 
   function saveData() {
     const storeData = JSON.stringify({
@@ -79,7 +87,7 @@
     eraseWidth: 8,
     lineCap: 'round',
     uuid: 'some-browser-id',
-    onAddNode(node){
+    onAddNode(node) {
       console.log(node);
       initialData.push(node);
       saveData();
@@ -115,6 +123,33 @@
   document.querySelector('#zoomout').addEventListener('click', () => {
     scale -= 0.1;
     instance.context.transformCtrl.scale(scale);
+    instance.context.drawCtrl.redraw();
+  });
+
+  const offset = {
+    x: 0, y: 0,
+  }
+  document.querySelector('#moveright').addEventListener('click', () => {
+    offset.x = offset.x + 10;
+    instance.context.transformCtrl.offset(offset.x, offset.y);
+    instance.context.drawCtrl.redraw();
+  });
+
+  document.querySelector('#moveleft').addEventListener('click', () => {
+    offset.x = offset.x - 10;
+    instance.context.transformCtrl.offset(offset.x, offset.y);
+    instance.context.drawCtrl.redraw();
+  });
+
+  document.querySelector('#movetop').addEventListener('click', () => {
+    offset.y = offset.y - 10;
+    instance.context.transformCtrl.offset(offset.x, offset.y);
+    instance.context.drawCtrl.redraw();
+  });
+
+  document.querySelector('#movebottom').addEventListener('click', () => {
+    offset.y = offset.y + 10;
+    instance.context.transformCtrl.offset(offset.x, offset.y);
     instance.context.drawCtrl.redraw();
   });
 </script>

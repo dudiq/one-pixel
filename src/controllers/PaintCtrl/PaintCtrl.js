@@ -45,6 +45,7 @@ export default class PaintCtrl {
   }
 
   onMouseStart = point => {
+    if (this.isClicked) return;
     this.tool.onMouseStart(point);
     this.isClicked = true;
   };
