@@ -1,4 +1,4 @@
-import Touches from './Touches';
+import Touch from '../Touch';
 
 const THRESHOLD_MOVE = 2;
 
@@ -17,10 +17,10 @@ function preventEvent(e) {
   e.preventDefault && e.preventDefault(); // others browsers
 }
 
-function inThreshold(x, y, startX, startY) {
+function inThreshold(p1, p2) {
   return (
-    Math.abs(x - startX) > THRESHOLD_MOVE
-    || Math.abs(y - startY) > THRESHOLD_MOVE
+    Math.abs(p1.x - p2.x) > THRESHOLD_MOVE
+    || Math.abs(p1.y - p2.y) > THRESHOLD_MOVE
   );
 }
 
@@ -30,19 +30,20 @@ export default class Mouse {
     const element = context.element;
     this.element = element;
 
-    this.touches = new Touches();
-
     this.events = context.radio.events('mouse', {
       onStart: 'onStart',
       onStop: 'onStop',
       onMove: 'onMove',
+      onDragZoom: 'onDragZoom',
       onWheel: 'onWheel',
       onGestureStart: 'onGestureStart',
       onGestureMove: 'onGestureMove',
     });
 
     this.isDown = false;
-    this.isMouseEvents = true;
+    this.isMoved = false;
+    this.isFirstMove = false;
+    this.isDragAndZoom = false;
 
     this.pointFirst = {
       x: 0,
@@ -68,8 +69,8 @@ export default class Mouse {
    * @param {Event} ev
    */
   updatePoints(ev) {
-    this.touches.processTouchByIndex(ev, 0, this.setPointFirst);
-    this.touches.processTouchByIndex(ev, 1, this.setPointSecond);
+    this.context.touch.processTouchByIndex(ev, 0, this.setPointFirst);
+    this.context.touch.processTouchByIndex(ev, 1, this.setPointSecond);
   }
 
   setPointFirst = (x, y) => {
@@ -86,7 +87,7 @@ export default class Mouse {
 
   onMouseStart = ev => {
     preventEvent(ev);
-    this.touches.collectTouches(ev);
+    this.context.touch.collectTouches(ev);
     this.updatePoints(ev);
     this.startPointAdd();
     this.isDown = true;
@@ -96,47 +97,54 @@ export default class Mouse {
     preventEvent(ev);
     this.updatePoints(ev);
 
-    if (this.isDown) {
-      this.isMouseEvents
-        && this.context.radio.trig(this.events.onStart, this.pointFirst);
+    if (this.isDown && !this.isMoved) {
+      if (inThreshold(this.pointFirst, this.pointStart)) {
+        this.isMoved = true;
+      }
+    }
+    if (!this.isMoved) return;
+
+    if (ev.which === 2 || !this.context.touch.isFingerOne()) {
+      this.isDragAndZoom = true;
     }
 
-    this.isMouseEvents
-      && this.context.radio.trig(this.events.onMove, this.pointFirst);
+    if (this.isDragAndZoom) {
+      // do pitch and zoom
+      this.isFirstMove && this.finishOnEnd();
+      this.context.radio.trig(this.events.onDragZoom);
+    }
+
+    if (this.isDragAndZoom) return;
+
+    this.trigOnStart();
+
+    this.context.radio.trig(this.events.onMove, this.pointFirst);
+    this.isMoved && (this.isFirstMove = true);
   };
+
+  trigOnStart() {
+    if (this.isDown && !this.isFirstMove) {
+      this.context.radio.trig(this.events.onStart, this.pointFirst);
+    }
+  }
+
+  finishOnEnd() {
+    this.isDown = false;
+    this.isMoved = false;
+    this.isFirstMove = false;
+    this.context.radio.trig(this.events.onStop, this.pointFirst);
+  }
 
   onMouseEnd = ev => {
     preventEvent(ev);
     this.updatePoints(ev);
     this.startPointRemove();
 
-    this.touches.removeTouches(ev);
-    if (this.touches.isEmpty()) {
-      this.isDown = false;
-      this.isMouseEvents
-        && this.context.radio.trig(this.events.onStop, this.pointFirst);
+    this.context.touch.removeTouches(ev);
+    if (this.context.touch.isEmpty()) {
+      this.isDragAndZoom = false;
+      this.finishOnEnd();
     }
-  };
-
-  onGestureStart = ev => {
-    preventEvent(ev);
-    this.isMouseEvents = false;
-    this.context.radio.trig(this.events.onGestureStart, ev.pageX, ev.pageY);
-  };
-
-  onGestureChange = ev => {
-    preventEvent(ev);
-    this.context.radio.trig(
-      this.events.onGestureStart,
-      ev.scale,
-      ev.pageX,
-      ev.pageY,
-    );
-  };
-
-  onGestureEnd = ev => {
-    preventEvent(ev);
-    this.isMouseEvents = true;
   };
 
   onWheel = ev => {
@@ -151,14 +159,14 @@ export default class Mouse {
 
   startPointAdd() {
     if (this.pointStart.downId) return;
-    this.pointStart.downId = this.touches.touchesList[0];
+    this.pointStart.downId = this.context.touch.getTouchByIndex(0);
     this.pointStart.x = this.pointFirst.x;
     this.pointStart.y = this.pointFirst.y;
   }
 
   startPointRemove() {
     if (!this.pointStart.downId) return;
-    if (this.pointStart.downId !== this.touches.touchesList[0]) return;
+    if (this.pointStart.downId !== this.context.touch.getTouchByIndex(0)) return;
     this.pointStart.downId = null;
     this.pointStart.x = 0;
     this.pointStart.y = 0;
@@ -176,15 +184,6 @@ export default class Mouse {
     this.element.addEventListener('mouseup', this.onMouseEnd, false);
     this.element.addEventListener('mouseleave', this.onMouseEnd, false);
 
-    window.addEventListener('gesturestart', this.onGestureStart, {
-      passive: false,
-    });
-    window.addEventListener('gesturechange', this.onGestureChange, {
-      passive: false,
-    });
-    window.addEventListener('gestureend', this.onGestureEnd, {
-      passive: false,
-    });
     window.addEventListener('wheel', this.onWheel, { passive: false });
   }
 
@@ -200,9 +199,6 @@ export default class Mouse {
     this.element.removeEventListener('mouseup', this.onMouseEnd, false);
     this.element.removeEventListener('mouseleave', this.onMouseEnd, false);
 
-    window.removeEventListener('gesturestart', this.onGestureStart);
-    window.removeEventListener('gesturechange', this.onGestureChange);
-    window.removeEventListener('gestureend', this.onGestureEnd);
     window.removeEventListener('wheel', this.onWheel);
   }
 

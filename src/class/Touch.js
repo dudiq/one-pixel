@@ -29,7 +29,7 @@ function getTouchId(touch) {
   return touch ? C_TOUCH_NORM + touch.identifier : '';
 }
 
-export default class Touches {
+export default class Touch {
   constructor() {
     this.touchesMap = {};
     this.touchesList = [];
@@ -37,6 +37,14 @@ export default class Touches {
 
   isEmpty() {
     return this.touchesList.length === 0;
+  }
+
+  isFingerOne() {
+    return this.touchesList.length === 1;
+  }
+
+  getTouchByIndex(index) {
+    return this.touchesList[index];
   }
 
   processTouchByIndex(ev, findIndex, cb) {

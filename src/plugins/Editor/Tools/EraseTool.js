@@ -31,7 +31,7 @@ export default class EraseTool extends BaseTool {
     const node = context.nodes.findCrossedByPoint(x, y, CLIP_WIDTH);
     if (!node) return;
 
-    context.paintCtrl.createNewNode({
+    context.editor.createNewNode({
       i: this.getNewId(),
       t: NODE_TYPES.NODE_REMOVE,
       v: node.i,

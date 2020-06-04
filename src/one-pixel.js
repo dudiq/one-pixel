@@ -1,13 +1,12 @@
 import radio from '@/system/radio';
 import Context from '@/class/Context';
 import Canvas from '@/class/Canvas';
+import Touch from '@/class/Touch';
 import Mouse from '@/class/Mouse';
 import Nodes from '@/class/Nodes';
 import Images from '@/class/Images';
 
 import DrawCtrl from '@/controllers/DrawCtrl';
-import PaintCtrl from '@/controllers/PaintCtrl';
-import ConfigCtrl from '@/controllers/ConfigCtrl';
 import TransformCtrl from '@/controllers/TransformCtrl';
 import GestureCtrl from '@/controllers/GestureCtrl';
 
@@ -25,6 +24,7 @@ export default class OnePixel {
 
     context.registerModules({
       canvas: Canvas,
+      touch: Touch,
       mouse: Mouse,
       nodes: Nodes,
       images: Images,
@@ -32,14 +32,11 @@ export default class OnePixel {
 
     context.registerModules({
       drawCtrl: DrawCtrl,
-      paintCtrl: PaintCtrl,
       transformCtrl: TransformCtrl,
       gestureCtrl: GestureCtrl,
     });
 
-    context.registerModules({
-      configCtrl: ConfigCtrl,
-    });
+    (config.plugins || []).forEach(plugin => context.register(plugin.pluginName, plugin));
 
     context.init();
   }
@@ -53,15 +50,7 @@ export default class OnePixel {
   }
 
   setTool(toolName) {
-    this.context.paintCtrl.setTool(toolName);
-  }
-
-  undo() {
-    this.context.commandCtrl.undo();
-  }
-
-  redo() {
-    this.context.commandCtrl.redo();
+    this.context.editor.setTool(toolName);
   }
 
   startDraw() {

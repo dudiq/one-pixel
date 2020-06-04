@@ -29,8 +29,8 @@ const outputConf = {
   sourcemap: withSourceMaps,
 };
 
-export default {
-  input: resolveFile('./src/one-pixel.js'),
+const createConf = ({ input, output }) => ({
+  input,
   // external: [...Object.keys(pkg.dependencies)],
   plugins: [
     json(),
@@ -56,17 +56,41 @@ export default {
   watch: {
     exclude: ['node_modules/**'],
   },
-  output: [
-    {
-      ...outputConf,
-      file: resolveFile(pkg.main),
-      name: pkg.name,
-      format: 'umd',
-    },
-    {
-      ...outputConf,
-      file: resolveFile(pkg.module),
-      format: 'esm',
-    },
-  ],
-};
+  output,
+});
+
+export default [
+  createConf({
+    input: resolveFile('./src/one-pixel.js'),
+    output: [
+      {
+        ...outputConf,
+        file: resolveFile(pkg.main),
+        name: pkg.name,
+        format: 'umd',
+      },
+      {
+        ...outputConf,
+        file: resolveFile(pkg.module),
+        format: 'esm',
+      },
+    ],
+  }),
+
+  createConf({
+    input: resolveFile('./src/Plugins/Editor/index.js'),
+    output: [
+      {
+        ...outputConf,
+        file: resolveFile('./dist/editor-umd.js'),
+        name: 'one-pixel-editor',
+        format: 'umd',
+      },
+      {
+        ...outputConf,
+        file: resolveFile('./dist/editor-esm.js'),
+        format: 'esm',
+      },
+    ],
+  }),
+];

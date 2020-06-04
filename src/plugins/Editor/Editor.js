@@ -4,10 +4,12 @@ import EraseTool from './Tools/EraseTool';
 
 // http://perfectionkills.com/exploring-canvas-drawing-techniques/
 
-export default class PaintCtrl {
+export default class Editor {
+  static pluginName = 'editor';
+
   constructor(context) {
     this.context = context;
-    this.events = context.radio.events('paintCtrl', {
+    this.events = context.radio.events('editor', {
       onAddNode: 'onAddNode',
     });
 
@@ -24,24 +26,16 @@ export default class PaintCtrl {
   }
 
   setTool(toolName) {
-    switch (toolName) {
-      case 'pen':
-        this.tool = this.tools.pen;
-        break;
-      case 'erase':
-        this.tool = this.tools.erase;
-        break;
-      default:
-        break;
-    }
+    if (this.tools[toolName]) this.tool = this.tools[toolName];
   }
 
   bindMouse() {
     const context = this.context;
     const radio = context.radio;
-    radio.on(context.mouse.events.onStart, this.onMouseStart);
-    radio.on(context.mouse.events.onMove, this.onMouseMove);
-    radio.on(context.mouse.events.onStop, this.onMouseEnd);
+    const events = context.mouse.events;
+    radio.on(events.onStart, this.onMouseStart);
+    radio.on(events.onMove, this.onMouseMove);
+    radio.on(events.onStop, this.onMouseEnd);
   }
 
   onMouseStart = point => {

@@ -5,9 +5,9 @@ export default class Context {
   }
 
   register(moduleName, Module) {
-    if (this[moduleName]) {
-      throw new Error('module already registered');
-    }
+    if (!moduleName) throw new Error('not defined module name');
+    if (this[moduleName]) throw new Error('module already registered');
+
     this[moduleName] = typeof Module === 'function' ? new Module(this) : Module;
     this.modulesKeys[moduleName] = true;
   }

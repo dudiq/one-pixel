@@ -5,6 +5,7 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script src="../dist/one-pixel.umd.js"></script>
+  <script src="../dist/editor-umd.js"></script>
 </head>
 <body>
 <style>
@@ -44,6 +45,7 @@
 
 <script>
   const Pixel = window['one-pixel-2d'].default;
+  const EditorPlugin = window['one-pixel-editor'].default;
   const KEY = 'data-demo-one-pixel';
 
   const storedVal = localStorage.getItem(KEY);
@@ -87,11 +89,15 @@
     eraseWidth: 8,
     lineCap: 'round',
     uuid: 'some-browser-id',
-    onAddNode(node) {
-      console.log(node);
-      initialData.push(node);
-      saveData();
-    }
+    plugins: [
+      EditorPlugin,
+    ],
+  });
+
+  instance.context.radio.on(instance.context.editor.events.onAddNode, node => {
+    console.log(node);
+    initialData.push(node);
+    saveData();
   });
 
   instance.setData(initialData);
