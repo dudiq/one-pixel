@@ -3,11 +3,13 @@ import Context from '@/class/Context';
 import Canvas from '@/class/Canvas';
 import Mouse from '@/class/Mouse';
 import Nodes from '@/class/Nodes';
-import DrawCtrl from '@/controllers/DrawCtrl';
 import Images from '@/class/Images';
+
+import DrawCtrl from '@/controllers/DrawCtrl';
 import PaintCtrl from '@/controllers/PaintCtrl';
 import ConfigCtrl from '@/controllers/ConfigCtrl';
 import TransformCtrl from '@/controllers/TransformCtrl';
+import GestureCtrl from '@/controllers/GestureCtrl';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -32,6 +34,7 @@ export default class OnePixel {
       drawCtrl: DrawCtrl,
       paintCtrl: PaintCtrl,
       transformCtrl: TransformCtrl,
+      gestureCtrl: GestureCtrl,
     });
 
     context.registerModules({

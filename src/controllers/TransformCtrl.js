@@ -43,8 +43,6 @@ export default class TransformsCtrl {
 
   offset(x, y) {
     if (x === undefined || y === undefined) return this.metaOffset;
-    this.metaOffset.x = x;
-    this.metaOffset.y = y;
     this.transform(x, y, this.metaScale.scale);
     return this.metaOffset;
   }
@@ -52,7 +50,6 @@ export default class TransformsCtrl {
   scale(val) {
     if (val === undefined) return this.metaScale.scale;
 
-    this.metaScale.scale = val;
     const offset = this.metaOffset;
     this.transform(offset.x, offset.y, val);
     return this.metaScale.scale;
@@ -65,6 +62,9 @@ export default class TransformsCtrl {
   }
 
   transform(x, y, scaleVal) {
+    this.metaOffset.x = x;
+    this.metaOffset.y = y;
+    this.metaScale.scale = scaleVal;
     const matrix = compose(
       identity(),
       translate(x, y),

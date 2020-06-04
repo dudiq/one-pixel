@@ -39,9 +39,9 @@ export default class PaintCtrl {
   bindMouse() {
     const context = this.context;
     const radio = context.radio;
-    radio.on(context.mouse.events.start, this.onMouseStart);
-    radio.on(context.mouse.events.move, this.onMouseMove);
-    radio.on(context.mouse.events.stop, this.onMouseEnd);
+    radio.on(context.mouse.events.onStart, this.onMouseStart);
+    radio.on(context.mouse.events.onMove, this.onMouseMove);
+    radio.on(context.mouse.events.onStop, this.onMouseEnd);
   }
 
   onMouseStart = point => {

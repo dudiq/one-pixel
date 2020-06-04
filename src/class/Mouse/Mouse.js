@@ -33,10 +33,16 @@ export default class Mouse {
     this.touches = new Touches();
 
     this.events = context.radio.events('mouse', {
-      start: 'start',
-      stop: 'stop',
-      move: 'move',
+      onStart: 'onStart',
+      onStop: 'onStop',
+      onMove: 'onMove',
+      onWheel: 'onWheel',
+      onGestureStart: 'onGestureStart',
+      onGestureMove: 'onGestureMove',
     });
+
+    this.isDown = false;
+    this.isMouseEvents = true;
 
     this.pointFirst = {
       x: 0,
@@ -62,7 +68,6 @@ export default class Mouse {
    * @param {Event} ev
    */
   updatePoints(ev) {
-    preventEvent(ev);
     this.touches.processTouchByIndex(ev, 0, this.setPointFirst);
     this.touches.processTouchByIndex(ev, 1, this.setPointSecond);
   }
@@ -80,24 +85,68 @@ export default class Mouse {
   };
 
   onMouseStart = ev => {
+    preventEvent(ev);
     this.touches.collectTouches(ev);
     this.updatePoints(ev);
     this.startPointAdd();
-    this.context.radio.trig(this.events.start, this.pointFirst);
+    this.isDown = true;
   };
 
   onMouseMove = ev => {
+    preventEvent(ev);
     this.updatePoints(ev);
-    this.context.radio.trig(this.events.move, this.pointFirst);
+
+    if (this.isDown) {
+      this.isMouseEvents
+        && this.context.radio.trig(this.events.onStart, this.pointFirst);
+    }
+
+    this.isMouseEvents
+      && this.context.radio.trig(this.events.onMove, this.pointFirst);
   };
 
   onMouseEnd = ev => {
+    preventEvent(ev);
     this.updatePoints(ev);
     this.startPointRemove();
+
     this.touches.removeTouches(ev);
     if (this.touches.isEmpty()) {
-      this.context.radio.trig(this.events.stop, this.pointFirst);
+      this.isDown = false;
+      this.isMouseEvents
+        && this.context.radio.trig(this.events.onStop, this.pointFirst);
     }
+  };
+
+  onGestureStart = ev => {
+    preventEvent(ev);
+    this.isMouseEvents = false;
+    this.context.radio.trig(this.events.onGestureStart, ev.pageX, ev.pageY);
+  };
+
+  onGestureChange = ev => {
+    preventEvent(ev);
+    this.context.radio.trig(
+      this.events.onGestureStart,
+      ev.scale,
+      ev.pageX,
+      ev.pageY,
+    );
+  };
+
+  onGestureEnd = ev => {
+    preventEvent(ev);
+    this.isMouseEvents = true;
+  };
+
+  onWheel = ev => {
+    preventEvent(ev);
+    const isScale = ev.ctrlKey || ev.metaKey;
+    const scaleDx = isScale ? ev.deltaY * 0.01 : 0;
+    const posX = isScale ? 0 : ev.deltaX * 2;
+    const posY = isScale ? 0 : ev.deltaY * 2;
+
+    this.context.radio.trig(this.events.onWheel, scaleDx, posX, posY);
   };
 
   startPointAdd() {
@@ -126,6 +175,17 @@ export default class Mouse {
     this.element.addEventListener('mousemove', this.onMouseMove, false);
     this.element.addEventListener('mouseup', this.onMouseEnd, false);
     this.element.addEventListener('mouseleave', this.onMouseEnd, false);
+
+    window.addEventListener('gesturestart', this.onGestureStart, {
+      passive: false,
+    });
+    window.addEventListener('gesturechange', this.onGestureChange, {
+      passive: false,
+    });
+    window.addEventListener('gestureend', this.onGestureEnd, {
+      passive: false,
+    });
+    window.addEventListener('wheel', this.onWheel, { passive: false });
   }
 
   removeEvents() {
@@ -139,6 +199,11 @@ export default class Mouse {
     this.element.removeEventListener('mousemove', this.onMouseMove, false);
     this.element.removeEventListener('mouseup', this.onMouseEnd, false);
     this.element.removeEventListener('mouseleave', this.onMouseEnd, false);
+
+    window.removeEventListener('gesturestart', this.onGestureStart);
+    window.removeEventListener('gesturechange', this.onGestureChange);
+    window.removeEventListener('gestureend', this.onGestureEnd);
+    window.removeEventListener('wheel', this.onWheel);
   }
 
   destroy() {
