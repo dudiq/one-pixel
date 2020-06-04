@@ -34,7 +34,9 @@ export default class Mouse {
       onStart: 'onStart',
       onStop: 'onStop',
       onMove: 'onMove',
+      onDragZoomStart: 'onDragZoomStart',
       onDragZoom: 'onDragZoom',
+      onDragZoomEnd: 'onDragZoomEnd',
       onWheel: 'onWheel',
       onGestureStart: 'onGestureStart',
       onGestureMove: 'onGestureMove',
@@ -55,10 +57,15 @@ export default class Mouse {
       y: 0,
     };
 
-    this.pointStart = {
+    this.pointInitFirst = {
       x: 0,
       y: 0,
       downId: null,
+    };
+
+    this.pointInitSecond = {
+      x: 0,
+      y: 0,
     };
 
     this.addEvents(element);
@@ -76,8 +83,6 @@ export default class Mouse {
   setPointFirst = (x, y) => {
     this.pointFirst.x = x;
     this.pointFirst.y = y;
-    this.pointSecond.x = x;
-    this.pointSecond.y = y;
   };
 
   setPointSecond = (x, y) => {
@@ -90,6 +95,7 @@ export default class Mouse {
     this.context.touch.collectTouches(ev);
     this.updatePoints(ev);
     this.startPointAdd();
+    if (ev.which === 3) return;
     this.isDown = true;
   };
 
@@ -98,14 +104,18 @@ export default class Mouse {
     this.updatePoints(ev);
 
     if (this.isDown && !this.isMoved) {
-      if (inThreshold(this.pointFirst, this.pointStart)) {
+      if (inThreshold(this.pointFirst, this.pointInitFirst)) {
         this.isMoved = true;
       }
     }
     if (!this.isMoved) return;
 
-    if (ev.which === 2 || !this.context.touch.isFingerOne()) {
+    if (
+      !this.isDragAndZoom
+      && (ev.which === 2 || !this.context.touch.isFingerOne())
+    ) {
       this.isDragAndZoom = true;
+      this.context.radio.trig(this.events.onDragZoomStart);
     }
 
     if (this.isDragAndZoom) {
@@ -142,10 +152,17 @@ export default class Mouse {
 
     this.context.touch.removeTouches(ev);
     if (this.context.touch.isEmpty()) {
-      this.isDragAndZoom = false;
+      this.finishDrag();
       this.finishOnEnd();
     }
   };
+
+  finishDrag() {
+    if (this.isDragAndZoom) {
+      this.context.radio.trig(this.events.onDragZoomEnd);
+    }
+    this.isDragAndZoom = false;
+  }
 
   onWheel = ev => {
     preventEvent(ev);
@@ -158,18 +175,18 @@ export default class Mouse {
   };
 
   startPointAdd() {
-    if (this.pointStart.downId) return;
-    this.pointStart.downId = this.context.touch.getTouchByIndex(0);
-    this.pointStart.x = this.pointFirst.x;
-    this.pointStart.y = this.pointFirst.y;
+    if (this.pointInitFirst.downId) return;
+    this.pointInitFirst.downId = this.context.touch.getTouchByIndex(0);
+    this.pointInitFirst.x = this.pointFirst.x;
+    this.pointInitFirst.y = this.pointFirst.y;
   }
 
   startPointRemove() {
-    if (!this.pointStart.downId) return;
-    if (this.pointStart.downId !== this.context.touch.getTouchByIndex(0)) return;
-    this.pointStart.downId = null;
-    this.pointStart.x = 0;
-    this.pointStart.y = 0;
+    if (!this.pointInitFirst.downId) return;
+    if (this.pointInitFirst.downId !== this.context.touch.getTouchByIndex(0)) return;
+    this.pointInitFirst.downId = null;
+    this.pointInitFirst.x = 0;
+    this.pointInitFirst.y = 0;
   }
 
   addEvents() {

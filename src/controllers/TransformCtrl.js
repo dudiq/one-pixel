@@ -12,7 +12,7 @@ import {
 export default class TransformsCtrl {
   constructor(context) {
     this.context = context;
-
+    this.matrix = null;
     this.setMatrix(identity());
 
     /**
@@ -41,6 +41,10 @@ export default class TransformsCtrl {
     return applyToPoint(this.inverse, point);
   }
 
+  getOffPoint(point) {
+    return applyToPoint(this.matrix, point);
+  }
+
   offset(x, y) {
     if (x === undefined || y === undefined) return this.metaOffset;
     this.transform(x, y, this.metaScale.scale);
@@ -61,10 +65,18 @@ export default class TransformsCtrl {
     this.context.canvas.setTransform(matrix);
   }
 
+  transformByCenterPoint(centerX, centerY, dx, dy, scaleVal) {
+    const offset = this.offset();
+    this.transform(offset.x - dx, offset.y - dy, scaleVal);
+  }
+
   transform(x, y, scaleVal) {
     this.metaOffset.x = x;
     this.metaOffset.y = y;
     this.metaScale.scale = scaleVal;
+
+    scaleVal = Math.floor(scaleVal * 1000) / 1000;
+
     const matrix = compose(
       identity(),
       translate(x, y),

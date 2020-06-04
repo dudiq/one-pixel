@@ -8,7 +8,7 @@ import Images from '@/class/Images';
 
 import DrawCtrl from '@/controllers/DrawCtrl';
 import TransformCtrl from '@/controllers/TransformCtrl';
-import GestureCtrl from '@/controllers/GestureCtrl';
+import DragZoomCtrl from '@/controllers/DragZoomCtrl';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -33,7 +33,7 @@ export default class OnePixel {
     context.registerModules({
       drawCtrl: DrawCtrl,
       transformCtrl: TransformCtrl,
-      gestureCtrl: GestureCtrl,
+      dragZoomCtrl: DragZoomCtrl,
     });
 
     (config.plugins || []).forEach(plugin => context.register(plugin.pluginName, plugin));
