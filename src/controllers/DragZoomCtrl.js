@@ -17,6 +17,10 @@ const browserPrefix = (() => {
 const CSS3_TRANSFORM = `${browserPrefix}transform`;
 const CSS3_ORIGIN = `${browserPrefix}transform-origin`;
 
+function getCenter(p1, p2) {
+  return (p1 + p2) / 2;
+}
+
 export default class DragZoomCtrl {
   constructor(context) {
     this.context = context;
@@ -33,19 +37,26 @@ export default class DragZoomCtrl {
     };
 
     this.initials = {
-      x: 0,
-      y: 0,
+      point: {
+        x: 0,
+        y: 0,
+      },
+      offset: {
+        x: 0,
+        y: 0,
+      },
+      matrix: null,
       scale: 1,
       initialDistance: 1,
     };
   }
 
-  onWheel(scaleDx, xdx, ydx) {
+  onWheel(scaleDx, dx, dy) {
     const scale = this.context.transformCtrl.scale();
     const offset = this.context.transformCtrl.offset();
     this.context.transformCtrl.transform(
-      offset.x - xdx,
-      offset.y - ydx,
+      offset.x - dx,
+      offset.y - dy,
       scale - scaleDx,
     );
     this.context.drawCtrl.redraw();
@@ -53,13 +64,6 @@ export default class DragZoomCtrl {
 
   onDragZoomStart() {
     this.updateInitials();
-    this.updateOffset();
-  }
-
-  updateOffset() {
-    const dragOffset = this.dragOffset;
-    dragOffset.x = this.context.mouse.pointFirst.x;
-    dragOffset.y = this.context.mouse.pointFirst.y;
   }
 
   updateInitials() {
@@ -73,71 +77,66 @@ export default class DragZoomCtrl {
       pointFirst.y,
       pointSecond.y,
     );
-    initials.scale = this.context.transformCtrl.scale();
     const offset = this.context.transformCtrl.offset();
-    initials.x = offset.x;
-    initials.y = offset.y;
+
+    initials.point.x = getCenter(pointFirst.x, pointSecond.x);
+    initials.point.y = getCenter(pointFirst.y, pointSecond.y);
+    initials.scale = this.context.transformCtrl.scale();
+    initials.offset.x = offset.x;
+    initials.offset.y = offset.y;
+    initials.matrix = this.context.transformCtrl.cloneMatrix();
   }
 
-  onDragZoom() {
-    const dragOffset = this.dragOffset;
-    const context = this.context;
-    const mouse = context.mouse;
-
-    if (context.touch.isFingerOne()) {
-      this.updateInitials();
-    }
-
-    const dx = dragOffset.x - mouse.pointFirst.x;
-    const dy = dragOffset.y - mouse.pointFirst.y;
-
+  getNextDistance() {
+    const mouse = this.context.mouse;
     const pointFirst = mouse.pointFirst;
     const pointSecond = mouse.pointSecond;
-    const nextDist = getDistance(
+    return getDistance(
       pointFirst.x,
       pointSecond.x,
       pointFirst.y,
       pointSecond.y,
     );
-    const prevDist = this.initials.initialDistance;
+  }
+
+  onDragZoom() {
+    const context = this.context;
+    const mouse = context.mouse;
+    const initials = this.initials;
+    const transformCtrl = context.transformCtrl;
+
+    if (context.touch.isFingerOne()) {
+      this.updateInitials();
+    }
+
+    const nextDist = this.getNextDistance();
+    const prevDist = initials.initialDistance;
     const k = prevDist === 0 || nextDist === 0 ? 1 : nextDist / prevDist;
+    const nextScale = initials.scale * k;
 
-    const nextScale = this.initials.scale * k;
+    const centerX = getCenter(mouse.pointFirst.x, mouse.pointSecond.x);
+    const centerY = getCenter(mouse.pointFirst.y, mouse.pointSecond.y);
 
-    const centerPointX = pointFirst.x + pointSecond.x / 2;
-    const centerPointY = pointFirst.y + pointSecond.y / 2;
+    const dx = centerX - initials.point.x;
+    const dy = centerY - initials.point.y;
 
-    this.context.transformCtrl.transformByCenterPoint(
-      centerPointX,
-      centerPointY,
-      dx,
-      dy,
+    const newMatrix = transformCtrl.getNewMatrix(dx, dy, k);
+
+    transformCtrl.transform(
+      initials.offset.x + dx,
+      initials.offset.y + dy,
       nextScale,
     );
-    this.updateOffset();
-    this.context.drawCtrl.redraw();
 
-    // const trOffset = context.transformCtrl.offset();
-    // const cssPoint = context.transformCtrl.getOffPoint(trOffset);
-    // this.setCssTransforms(cssPoint.x, cssPoint.y, 0, 0, nextScale, 0);
+    const style = this.context.element.style;
+    style.transform = transformCtrl.getCssMatrix(newMatrix);
+    style.transformOrigin = `${initials.offset.x}px ${initials.offset.y}px`;
   }
 
   onDragZoomEnd() {
     this.context.drawCtrl.redraw();
-    this.setCssTransforms(0, 0, 0, 0, 1, 0);
-  }
-
-  setCssTransforms(offsetx, offsety, centerX, centerY, scaleVal, rotateVal) {
     const style = this.context.element.style;
-
-    const val = `${centerX - offsetx}px ${centerY - offsety}px 0px`;
-    style[CSS3_ORIGIN] != val && (style[CSS3_ORIGIN] = val);
-    style['transform-origin'] != val && (style['transform-origin'] = val);
-    style.transformOrigin != val && (style.transformOrigin = val);
-
-    const transVal = `translate3d(${offsetx}px, ${offsety}px, 0px) scale(${scaleVal}) rotate(${rotateVal}deg)`;
-    style[CSS3_TRANSFORM] != transVal && (style[CSS3_TRANSFORM] = transVal);
-    style.transform != transVal && (style.transform = transVal);
+    style.transform = '';
   }
 
   fitToScreen() {

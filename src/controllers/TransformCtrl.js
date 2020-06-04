@@ -7,7 +7,12 @@ import {
   inverse,
   compose,
   applyToPoint,
+  toCSS,
 } from 'transformation-matrix';
+
+function getFloorScale(scaleVal) {
+  return Math.floor(scaleVal * 1000) / 1000;
+}
 
 export default class TransformsCtrl {
   constructor(context) {
@@ -41,8 +46,8 @@ export default class TransformsCtrl {
     return applyToPoint(this.inverse, point);
   }
 
-  getOffPoint(point) {
-    return applyToPoint(this.matrix, point);
+  cloneMatrix() {
+    return compose(this.matrix);
   }
 
   offset(x, y) {
@@ -65,17 +70,31 @@ export default class TransformsCtrl {
     this.context.canvas.setTransform(matrix);
   }
 
-  transformByCenterPoint(centerX, centerY, dx, dy, scaleVal) {
-    const offset = this.offset();
-    this.transform(offset.x - dx, offset.y - dy, scaleVal);
+  getNewMatrix(x, y, scaleVal) {
+    return compose(translate(x, y), scale(scaleVal, scaleVal));
   }
 
-  transform(x, y, scaleVal) {
+  getCssMatrix(matrix) {
+    return toCSS(matrix);
+  }
+
+  updateMeta(x, y, scaleVal) {
     this.metaOffset.x = x;
     this.metaOffset.y = y;
     this.metaScale.scale = scaleVal;
+  }
 
-    scaleVal = Math.floor(scaleVal * 1000) / 1000;
+  transformCenter(newMatrix, k, x, y, scaleVal) {
+    scaleVal = getFloorScale(scaleVal);
+    // this.updateMeta(x, y, scaleVal);
+
+    const matrix = compose(translate(x, y), scale(scaleVal, scaleVal));
+    this.setMatrix(matrix);
+  }
+
+  transform(x, y, scaleVal) {
+    scaleVal = getFloorScale(scaleVal);
+    this.updateMeta(x, y, scaleVal);
 
     const matrix = compose(
       identity(),
