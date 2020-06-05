@@ -10,10 +10,6 @@ import {
   toCSS,
 } from 'transformation-matrix';
 
-function getFloorScale(scaleVal) {
-  return Math.floor(scaleVal * 1000) / 1000;
-}
-
 export default class TransformsCtrl {
   constructor(context) {
     this.context = context;
@@ -35,6 +31,19 @@ export default class TransformsCtrl {
      */
     this.metaScale = {
       scale: 1,
+    };
+
+    this.limitations = {
+      offset: {
+        minx: -100,
+        miny: -100,
+        maxx: 100,
+        maxy: 100,
+      },
+      scale: {
+        min: 0.5,
+        max: 1.5,
+      },
     };
   }
 
@@ -64,6 +73,10 @@ export default class TransformsCtrl {
     return this.metaScale.scale;
   }
 
+  /**
+   * @private
+   * @param matrix
+   */
   setMatrix(matrix) {
     this.matrix = matrix;
     this.inverse = inverse(this.matrix);
@@ -78,14 +91,56 @@ export default class TransformsCtrl {
     return toCSS(matrix);
   }
 
+  /**
+   * @private
+   * @param {number} x
+   * @param {number} y
+   * @param {number} scaleVal
+   */
   updateMeta(x, y, scaleVal) {
     this.metaOffset.x = x;
     this.metaOffset.y = y;
     this.metaScale.scale = scaleVal;
   }
 
+  /**
+   * @private
+   * @param {number} scaleVal
+   * @return {number}
+   */
+  getFloorScale(scaleVal) {
+    const limits = this.limitations.scale;
+    if (limits.max < scaleVal) return limits.max;
+    if (limits.min > scaleVal) return limits.min;
+    return Math.floor(scaleVal * 1000) / 1000;
+  }
+
+  /**
+   * @private
+   * @param {number} x
+   * @return {number}
+   */
+  getPointX(x) {
+    const limits = this.limitations.offset;
+    if (limits.maxx < x) return limits.maxx;
+    if (limits.minx > x) return limits.minx;
+    return x;
+  }
+
+  /**
+   * @private
+   * @param {number} y
+   * @return {number}
+   */
+  getPointY(y) {
+    const limits = this.limitations.offset;
+    if (limits.maxy < y) return limits.maxy;
+    if (limits.miny > y) return limits.miny;
+    return y;
+  }
+
   transformCenter(newMatrix, k, x, y, scaleVal) {
-    scaleVal = getFloorScale(scaleVal);
+    scaleVal = this.getFloorScale(scaleVal);
     // this.updateMeta(x, y, scaleVal);
 
     const matrix = compose(translate(x, y), scale(scaleVal, scaleVal));
@@ -93,7 +148,10 @@ export default class TransformsCtrl {
   }
 
   transform(x, y, scaleVal) {
-    scaleVal = getFloorScale(scaleVal);
+    scaleVal = this.getFloorScale(scaleVal);
+    x = this.getPointX(x);
+    y = this.getPointY(y);
+
     this.updateMeta(x, y, scaleVal);
 
     const matrix = compose(

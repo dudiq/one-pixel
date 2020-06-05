@@ -77,10 +77,12 @@ export default class DrawCtrl {
     }
 
     const offset = this.context.transformCtrl.offset();
+    const x = offset.x;
+    const y = offset.y;
     const scale = this.context.transformCtrl.scale();
     this.context.transformCtrl.transform(0, 0, 1);
     this.context.canvas.setSize(element.clientWidth, element.clientHeight);
-    this.context.transformCtrl.transform(offset.x, offset.y, scale);
+    this.context.transformCtrl.transform(x, y, scale);
 
     this.redraw();
   };

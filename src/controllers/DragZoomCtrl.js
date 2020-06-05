@@ -137,6 +137,7 @@ export default class DragZoomCtrl {
     this.context.drawCtrl.redraw();
     const style = this.context.element.style;
     style.transform = '';
+    style.transformOrigin = '';
   }
 
   fitToScreen() {
