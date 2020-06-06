@@ -11,7 +11,7 @@ export default class DrawCtrl {
     canvasLevel.addCanvas(this.nodeCanvas);
 
     this.timerId = null;
-    this.hookDrawEnd = context.hook.createHook();
+    this.hookRenderEnd = context.hook.createHook();
     this.hookResize = context.hook.createHook();
     this.meta = {
       w: 0,
@@ -51,7 +51,7 @@ export default class DrawCtrl {
     this.meta.renderNodeIndex += PORTION_LENGTH;
     if (nextStart >= len) {
       // done
-      this.onDrawEnd();
+      this.onRenderEnd();
       this.meta.renderNodeIndex = 0;
       return;
     }
@@ -65,19 +65,19 @@ export default class DrawCtrl {
     this.timerId = setTimeout(this.asyncDrawPortion, 0);
   }
 
-  drawBuffer() {
+  renderToScreen() {
     this.screenCanvas.clearCanvas(0, 0, this.meta.w, this.meta.h);
 
-    this.context.canvasLevel.forEachLevels(this.asyncDrawBuffer);
+    const levels = this.context.canvasLevel.getLevels();
+    for (let i = 0, l = levels.length; i < l; i++) {
+      const canvasEl = levels[i].canvas.canvasElement;
+      this.screenCanvas.canvasContext.drawImage(canvasEl, 0, 0);
+    }
   }
 
-  asyncDrawBuffer = canvas => {
-    this.screenCanvas.canvasContext.drawImage(canvas.canvasElement, 0, 0);
-  };
-
-  onDrawEnd() {
-    this.drawBuffer();
-    this.hookDrawEnd();
+  onRenderEnd() {
+    this.renderToScreen();
+    this.hookRenderEnd();
   }
 
   redraw() {
@@ -112,7 +112,7 @@ export default class DrawCtrl {
       return;
     }
     this.updateSize();
-    this.drawBuffer();
+    this.renderToScreen();
     this.redraw();
     this.hookResize(this.meta.w, this.meta.h);
   };

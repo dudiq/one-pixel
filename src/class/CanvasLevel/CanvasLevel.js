@@ -24,11 +24,4 @@ export default class CanvasLevel {
   getLevels() {
     return this.levels;
   }
-
-  forEachLevels(cb) {
-    const levels = this.levels;
-    for (let i = 0, l = levels.length; i < l; i++) {
-      cb(levels[i].canvas);
-    }
-  }
 }

@@ -45,7 +45,7 @@ export default class DragZoomCtrl {
   }
 
   init() {
-    this.context.drawCtrl.hookDrawEnd.on(this.dropStyles);
+    this.context.drawCtrl.hookRenderEnd.on(this.dropStyles);
   }
 
   onDragZoomStart = () => {

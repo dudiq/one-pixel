@@ -64,7 +64,9 @@ export default class Editor {
     this.tool.onMouseEnd(point);
   };
 
-  redraw() {}
+  redraw() {
+    this.context.drawCtrl.renderToScreen();
+  }
 
   createNewNode(node) {
     if (!node) return;
