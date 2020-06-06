@@ -1,7 +1,5 @@
 import {
   scale,
-  // TODO: add degree rotation
-  rotateDEG,
   translate,
   identity,
   inverse,
@@ -44,7 +42,7 @@ export default class TransformsCtrl {
       },
       scale: {
         min: 0.5,
-        max: 1.5,
+        max: 3.5,
       },
     };
   }
@@ -98,13 +96,15 @@ export default class TransformsCtrl {
 
   /**
    * @private
-   * @param {number} x
-   * @param {number} y
    * @param {number} scaleVal
    */
-  updateMeta(x, y, scaleVal) {
-    this.metaOffset.x = x;
-    this.metaOffset.y = y;
+  updateMeta(scaleVal) {
+    const po = applyToPoint(this.matrix, [0, 0]);
+    po[0] = Math.floor(po[0] * 10) / 10;
+    po[1] = Math.floor(po[1] * 10) / 10;
+
+    this.metaOffset.x = po[0];
+    this.metaOffset.y = po[1];
     this.metaScale.scale = scaleVal;
   }
 
@@ -144,27 +144,14 @@ export default class TransformsCtrl {
     return y;
   }
 
-  transformCenter(newMatrix, k, x, y, scaleVal) {
-    scaleVal = this.getFloorScale(scaleVal);
-    // this.updateMeta(x, y, scaleVal);
-
-    const matrix = compose(translate(x, y), scale(scaleVal, scaleVal));
-    this.setMatrix(matrix);
-  }
-
   transform(x, y, scaleVal) {
     scaleVal = this.getFloorScale(scaleVal);
     x = this.getPointX(x);
     y = this.getPointY(y);
 
-    this.updateMeta(x, y, scaleVal);
-
-    const matrix = compose(
-      identity(),
-      translate(x, y),
-      scale(scaleVal, scaleVal),
-    );
+    const matrix = compose(translate(x, y), scale(scaleVal, scaleVal));
     this.setMatrix(matrix);
+    this.updateMeta(scaleVal);
   }
 
   getClearRect(x, y, w, h) {

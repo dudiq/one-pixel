@@ -76,6 +76,7 @@ export default class DrawCtrl {
   }
 
   onRenderEnd() {
+    // TODO: add reqAnimationFrame for remove flickering when run hooks
     this.renderToScreen();
     this.hookRenderEnd();
   }
