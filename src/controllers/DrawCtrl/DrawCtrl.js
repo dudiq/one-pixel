@@ -1,65 +1,100 @@
-import { NODE_TYPES } from '@/constants';
+import Canvas from '@/class/Canvas';
+import Hooks from '@/class/Hooks';
 
-import LineTo from './nodeTypes/LineTo';
-import ImageNode from './nodeTypes/ImageNode';
-import BaseNode from './nodeTypes/BaseNode';
+import renderNodes from './renderNodes';
 
 const PORTION_LENGTH = 2000;
 
 export default class DrawCtrl {
   constructor(context) {
     this.context = context;
+    this.drawPlace = new Canvas(context);
     this.timerId = null;
+    this.hookDrawEnd = new Hooks();
     this.meta = {
-      currentDrawNodeIndex: 0,
+      w: 0,
+      h: 0,
+      renderNodeIndex: 0,
     };
 
-    this.drawTypes = {
-      [NODE_TYPES.NODE_LINE]: new LineTo(context),
-      [NODE_TYPES.NODE_IMAGE]: new ImageNode(context),
-      [NODE_TYPES.NODE_REMOVE]: new BaseNode(context),
-    };
+    this.renderNodes = renderNodes(context);
 
     window.addEventListener('resize', this.onResize, false);
   }
 
-  drawNode = node => {
-    const drawType = this.drawTypes[node.t];
-    if (!drawType) {
-      throw new Error(`not defined draw type ${drawType}`);
+  init() {
+    const el = this.context.element;
+    const canvas = this.drawPlace.canvasElement;
+    el.appendChild(canvas);
+    const w = el.clientWidth;
+    const h = el.clientHeight;
+    this.meta.w = w;
+    this.meta.h = h;
+    this.drawPlace.setSize(w, h);
+    this.context.canvas.setSize(w, h);
+  }
+
+  renderNode = node => {
+    const renderer = this.renderNodes[node.t];
+    if (!renderer) {
+      throw new Error(`not defined draw type ${renderer}`);
     }
 
-    drawType.render(node);
+    renderer.render(node);
   };
 
   asyncDrawPortion = () => {
-    this.context.nodes.processNodes(
-      this.meta.currentDrawNodeIndex,
-      PORTION_LENGTH,
-      this.drawNode,
-    );
+    const nodes = this.context.nodes;
+    const startIndex = this.meta.renderNodeIndex;
+    const len = nodes.getLength();
+    const endIndex = Math.min(startIndex + PORTION_LENGTH, len);
+
+    nodes.processNodes(this.meta.renderNodeIndex, endIndex, this.renderNode);
+    const nextStart = startIndex + PORTION_LENGTH;
+    this.meta.renderNodeIndex += PORTION_LENGTH;
+    if (nextStart >= len) {
+      // done
+      this.onDrawEnd();
+      this.meta.renderNodeIndex = 0;
+      return;
+    }
+
+    this.meta.renderNodeIndex = nextStart;
+    this.renderNext();
   };
 
-  drawPortionsList() {
+  renderNext() {
     clearTimeout(this.timerId);
     this.timerId = setTimeout(this.asyncDrawPortion, 0);
   }
 
-  startDraw() {
+  onDrawEnd() {
+    this.drawPlace.clearCanvas(0, 0, this.meta.w, this.meta.h);
+    this.drawPlace.canvasContext.drawImage(
+      this.context.canvas.canvasElement,
+      0,
+      0,
+    );
+    this.hookDrawEnd();
+  }
+
+  redraw() {
+    clearTimeout(this.timerId);
+    this.meta.renderNodeIndex = 0;
+
     const rect = this.context.transformCtrl.getClearRect(
       0,
       0,
       this.context.element.clientWidth,
       this.context.element.clientHeight,
     );
-    this.context.canvas.clearCanvas(rect.p1, rect.p2);
-    clearTimeout(this.timerId);
-    this.meta.currentDrawNodeIndex = 0;
-    this.drawPortionsList();
-  }
+    const x = rect.p1[0];
+    const y = rect.p1[1];
+    const w = rect.p2[0] - rect.p1[0];
+    const h = rect.p2[1] - rect.p1[1];
+    this.context.canvas.clearCanvas(x, y, w, h);
 
-  redraw() {
-    this.startDraw();
+    this.renderNext();
   }
 
   stopDraw() {
@@ -69,20 +104,23 @@ export default class DrawCtrl {
   onResize = () => {
     const element = this.context.element;
     const canvasElement = this.context.canvas.canvasElement;
-    if (
-      element.clientWidth === canvasElement.width
-      && canvasElement.height === element.clientHeight
-    ) {
+    const w = element.clientWidth;
+    const h = element.clientHeight;
+    if (w === canvasElement.width && h === canvasElement.height) {
       return;
     }
+    this.meta.w = w;
+    this.meta.h = h;
 
     const offset = this.context.transformCtrl.offset();
     const x = offset.x;
     const y = offset.y;
     const scale = this.context.transformCtrl.scale();
     this.context.transformCtrl.transform(0, 0, 1);
-    this.context.canvas.setSize(element.clientWidth, element.clientHeight);
+    this.context.canvas.setSize(w, h);
     this.context.transformCtrl.transform(x, y, scale);
+
+    this.drawPlace.setSize(w, h);
 
     this.redraw();
   };

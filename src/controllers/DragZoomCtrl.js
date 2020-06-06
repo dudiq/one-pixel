@@ -26,15 +26,9 @@ export default class DragZoomCtrl {
     this.context = context;
     const radio = context.radio;
     const events = context.mouse.events;
-    radio.on(events.onWheel, this.onWheel, this);
     radio.on(events.onDragZoom, this.onDragZoom, this);
     radio.on(events.onDragZoomStart, this.onDragZoomStart, this);
     radio.on(events.onDragZoomEnd, this.onDragZoomEnd, this);
-
-    this.dragOffset = {
-      x: 0,
-      y: 0,
-    };
 
     this.initials = {
       point: {
@@ -51,15 +45,8 @@ export default class DragZoomCtrl {
     };
   }
 
-  onWheel(scaleDx, dx, dy) {
-    const scale = this.context.transformCtrl.scale();
-    const offset = this.context.transformCtrl.offset();
-    this.context.transformCtrl.transform(
-      offset.x - dx,
-      offset.y - dy,
-      scale - scaleDx,
-    );
-    this.context.drawCtrl.redraw();
+  init() {
+    this.context.drawCtrl.hookDrawEnd.on(this.dropStyles);
   }
 
   onDragZoomStart() {
@@ -135,10 +122,13 @@ export default class DragZoomCtrl {
 
   onDragZoomEnd() {
     this.context.drawCtrl.redraw();
+  }
+
+  dropStyles = () => {
     const style = this.context.element.style;
     style.transform = '';
     style.transformOrigin = '';
-  }
+  };
 
   fitToScreen() {
     // var modelW = canvas.getModelWidth();

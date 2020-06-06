@@ -10,6 +10,8 @@ import {
   toCSS,
 } from 'transformation-matrix';
 
+const MAX_SIZE = 2000;
+
 export default class TransformsCtrl {
   constructor(context) {
     this.context = context;
@@ -37,8 +39,8 @@ export default class TransformsCtrl {
       offset: {
         minx: -100,
         miny: -100,
-        maxx: 100,
-        maxy: 100,
+        maxx: 200,
+        maxy: 200,
       },
       scale: {
         min: 0.5,

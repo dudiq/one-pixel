@@ -1,12 +1,7 @@
 export default class Canvas {
-  constructor(context) {
-    this.context = context;
-    const el = context.element;
+  constructor() {
     const canvas = document.createElement('canvas');
     this.canvasElement = canvas;
-    this.setSize(el.clientWidth, el.clientHeight);
-
-    el.appendChild(canvas);
 
     const ctx = canvas.getContext('2d');
     this.canvasContext = ctx;
@@ -34,9 +29,9 @@ export default class Canvas {
     );
   }
 
-  clearCanvas(p1, p2) {
+  clearCanvas(x, y, w, h) {
     const ctx = this.canvasContext;
-    ctx.clearRect(p1[0], p1[1], p2[0] - p1[0], p2[1] - p1[1]);
+    ctx.clearRect(x, y, w, h);
   }
 
   destroy() {}

@@ -102,12 +102,12 @@
 
   instance.setData(initialData);
 
-  instance.startDraw();
+  instance.redraw();
 
   document.querySelector('#reset').addEventListener('click', () => {
     initialData = [...basicData];
     instance.setData(initialData);
-    instance.startDraw();
+    instance.redraw();
     saveData();
   });
 

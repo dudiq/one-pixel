@@ -25,6 +25,10 @@ export default class Nodes {
     this.clearRemoved();
   }
 
+  getLength() {
+    return this.nodes.length;
+  }
+
   clearRemoved() {
     const nodes = this.nodes;
     const dropNodesMap = this.dropNodesMap;
@@ -62,9 +66,8 @@ export default class Nodes {
     return ret;
   }
 
-  processNodes(startIndex, processLength, cb) {
+  processNodes(startIndex, len, cb) {
     const nodes = this.nodes;
-    const len = Math.min(startIndex + processLength, nodes.length);
     if (len === 0) return;
 
     for (let i = startIndex; i < len; i++) {

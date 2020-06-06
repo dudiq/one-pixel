@@ -9,6 +9,7 @@ import Images from '@/class/Images';
 import DrawCtrl from '@/controllers/DrawCtrl';
 import TransformCtrl from '@/controllers/TransformCtrl';
 import DragZoomCtrl from '@/controllers/DragZoomCtrl';
+import WheelCtrl from '@/controllers/WheelCtrl';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -34,6 +35,7 @@ export default class OnePixel {
       drawCtrl: DrawCtrl,
       transformCtrl: TransformCtrl,
       dragZoomCtrl: DragZoomCtrl,
+      wheelCtrl: WheelCtrl,
     });
 
     (config.plugins || []).forEach(plugin => context.register(plugin.pluginName, plugin));
@@ -53,16 +55,16 @@ export default class OnePixel {
     this.context.editor.setTool(toolName);
   }
 
-  startDraw() {
+  redraw() {
     // wait images loaded
     if (!this.context.images.isLoaded) {
       this.context.radio.one(this.context.images.events.onLoaded, () => {
-        this.startDraw();
+        this.redraw();
       });
       return;
     }
 
-    this.context.drawCtrl.startDraw();
+    this.context.drawCtrl.redraw();
   }
 
   destroy() {
