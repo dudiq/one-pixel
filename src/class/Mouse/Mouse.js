@@ -166,8 +166,9 @@ export default class Mouse {
 
   onWheel = ev => {
     preventEvent(ev);
+    this.updatePoints(ev);
     const isScale = ev.ctrlKey || ev.metaKey;
-    const scaleDx = isScale ? ev.deltaY * 0.01 : 0;
+    const scaleDx = isScale ? ev.deltaY * 0.001 : 0;
     const posX = isScale ? 0 : ev.deltaX * 2;
     const posY = isScale ? 0 : ev.deltaY * 2;
 
