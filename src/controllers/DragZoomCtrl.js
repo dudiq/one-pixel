@@ -24,11 +24,10 @@ function getCenter(p1, p2) {
 export default class DragZoomCtrl {
   constructor(context) {
     this.context = context;
-    const radio = context.radio;
-    const events = context.mouse.events;
-    radio.on(events.onDragZoom, this.onDragZoom, this);
-    radio.on(events.onDragZoomStart, this.onDragZoomStart, this);
-    radio.on(events.onDragZoomEnd, this.onDragZoomEnd, this);
+    const hooks = context.mouse.hooks;
+    hooks.onDragZoom.on(this.onDragZoom);
+    hooks.onDragZoomStart.on(this.onDragZoomStart);
+    hooks.onDragZoomEnd.on(this.onDragZoomEnd);
 
     this.initials = {
       point: {
@@ -49,9 +48,9 @@ export default class DragZoomCtrl {
     this.context.drawCtrl.hookDrawEnd.on(this.dropStyles);
   }
 
-  onDragZoomStart() {
+  onDragZoomStart = () => {
     this.updateInitials();
-  }
+  };
 
   updateInitials() {
     const pointFirst = this.context.mouse.pointFirst;
@@ -86,7 +85,7 @@ export default class DragZoomCtrl {
     );
   }
 
-  onDragZoom() {
+  onDragZoom = () => {
     const context = this.context;
     const mouse = context.mouse;
     const initials = this.initials;
@@ -118,11 +117,11 @@ export default class DragZoomCtrl {
     const style = this.context.element.style;
     style.transform = transformCtrl.getCssMatrix(newMatrix);
     style.transformOrigin = `${initials.offset.x}px ${initials.offset.y}px`;
-  }
+  };
 
-  onDragZoomEnd() {
+  onDragZoomEnd = () => {
     this.context.drawCtrl.redraw();
-  }
+  };
 
   dropStyles = () => {
     const style = this.context.element.style;

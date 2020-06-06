@@ -94,7 +94,7 @@
     ],
   });
 
-  instance.context.radio.on(instance.context.editor.events.onAddNode, node => {
+  instance.context.editor.hookAddNode.on(node => {
     console.log(node);
     initialData.push(node);
     saveData();

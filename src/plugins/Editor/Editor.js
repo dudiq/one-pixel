@@ -1,3 +1,4 @@
+import Canvas from '@/class/Canvas';
 import BaseTool from './Tools/BaseTool';
 import PenTool from './Tools/PenTool';
 import EraseTool from './Tools/EraseTool';
@@ -9,9 +10,9 @@ export default class Editor {
 
   constructor(context) {
     this.context = context;
-    this.events = context.radio.events('editor', {
-      onAddNode: 'onAddNode',
-    });
+    this.hookAddNode = context.hook.createHook();
+
+    this.editorCanvas = new Canvas(context);
 
     this.tools = {
       base: new BaseTool(context),
@@ -25,17 +26,24 @@ export default class Editor {
     this.bindMouse();
   }
 
+  init() {
+    this.context.drawCtrl.hookResize.on(this.onResize);
+  }
+
   setTool(toolName) {
     if (this.tools[toolName]) this.tool = this.tools[toolName];
   }
 
+  onResize = (w, h) => {
+    this.editorCanvas.setSize(w, h);
+  };
+
   bindMouse() {
     const context = this.context;
-    const radio = context.radio;
-    const events = context.mouse.events;
-    radio.on(events.onStart, this.onMouseStart);
-    radio.on(events.onMove, this.onMouseMove);
-    radio.on(events.onStop, this.onMouseEnd);
+    const hooks = context.mouse.hooks;
+    hooks.onStart.on(this.onMouseStart);
+    hooks.onMove.on(this.onMouseMove);
+    hooks.onStop.on(this.onMouseEnd);
   }
 
   onMouseStart = point => {
@@ -61,6 +69,6 @@ export default class Editor {
 
     this.context.nodes.addNode(node);
     this.context.nodes.clearRemoved();
-    this.context.radio.trig(this.events.onAddNode, node);
+    this.hookAddNode(node);
   }
 }

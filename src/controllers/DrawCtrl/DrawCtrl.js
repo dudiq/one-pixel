@@ -1,5 +1,4 @@
 import Canvas from '@/class/Canvas';
-import Hooks from '@/class/Hooks';
 
 import renderNodes from './renderNodes';
 
@@ -10,7 +9,8 @@ export default class DrawCtrl {
     this.context = context;
     this.drawPlace = new Canvas(context);
     this.timerId = null;
-    this.hookDrawEnd = new Hooks();
+    this.hookDrawEnd = context.hook.createHook();
+    this.hookResize = context.hook.createHook();
     this.meta = {
       w: 0,
       h: 0,
@@ -68,13 +68,17 @@ export default class DrawCtrl {
     this.timerId = setTimeout(this.asyncDrawPortion, 0);
   }
 
-  onDrawEnd() {
+  drawBuffer() {
     this.drawPlace.clearCanvas(0, 0, this.meta.w, this.meta.h);
     this.drawPlace.canvasContext.drawImage(
       this.context.canvas.canvasElement,
       0,
       0,
     );
+  }
+
+  onDrawEnd() {
+    this.drawBuffer();
     this.hookDrawEnd();
   }
 
@@ -121,6 +125,8 @@ export default class DrawCtrl {
     this.context.transformCtrl.transform(x, y, scale);
 
     this.drawPlace.setSize(w, h);
+    this.drawBuffer();
+    this.hookResize(w, h);
 
     this.redraw();
   };

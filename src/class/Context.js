@@ -1,3 +1,5 @@
+import Hook from '@/class/Hook';
+
 export default class Context {
   constructor(modules = {}) {
     this.modulesKeys = {};

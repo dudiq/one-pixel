@@ -3,9 +3,7 @@ export default class Images {
     this.context = context;
     this.images = {};
     this.isLoaded = false;
-    this.events = context.radio.events('images', {
-      onLoaded: 'onLoaded',
-    });
+    this.hookLoaded = context.hook.createHook();
   }
 
   getImageById(id) {
@@ -22,7 +20,7 @@ export default class Images {
 
     this.isLoaded = true;
 
-    this.context.radio.trig(this.events.onLoaded);
+    this.hookLoaded();
   }
 
   clearImages() {

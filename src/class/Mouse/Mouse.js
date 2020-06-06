@@ -30,7 +30,7 @@ export default class Mouse {
     const element = context.element;
     this.element = element;
 
-    this.events = context.radio.events('mouse', {
+    this.hooks = context.hook.createHooks({
       onStart: 'onStart',
       onStop: 'onStop',
       onMove: 'onMove',
@@ -38,8 +38,6 @@ export default class Mouse {
       onDragZoom: 'onDragZoom',
       onDragZoomEnd: 'onDragZoomEnd',
       onWheel: 'onWheel',
-      onGestureStart: 'onGestureStart',
-      onGestureMove: 'onGestureMove',
     });
 
     this.isDown = false;
@@ -115,26 +113,26 @@ export default class Mouse {
       && (ev.which === 2 || !this.context.touch.isFingerOne())
     ) {
       this.isDragAndZoom = true;
-      this.context.radio.trig(this.events.onDragZoomStart);
+      this.hooks.onDragZoomStart();
     }
 
     if (this.isDragAndZoom) {
       // do pitch and zoom
       this.isFirstMove && this.finishOnEnd();
-      this.context.radio.trig(this.events.onDragZoom);
+      this.hooks.onDragZoom();
     }
 
     if (this.isDragAndZoom) return;
 
     this.trigOnStart();
 
-    this.context.radio.trig(this.events.onMove, this.pointFirst);
+    this.hooks.onMove(this.pointFirst);
     this.isMoved && (this.isFirstMove = true);
   };
 
   trigOnStart() {
     if (this.isDown && !this.isFirstMove) {
-      this.context.radio.trig(this.events.onStart, this.pointFirst);
+      this.hooks.onStart(this.pointFirst);
     }
   }
 
@@ -142,7 +140,7 @@ export default class Mouse {
     this.isDown = false;
     this.isMoved = false;
     this.isFirstMove = false;
-    this.context.radio.trig(this.events.onStop, this.pointFirst);
+    this.hooks.onStop(this.pointFirst);
   }
 
   onMouseEnd = ev => {
@@ -159,7 +157,7 @@ export default class Mouse {
 
   finishDrag() {
     if (this.isDragAndZoom) {
-      this.context.radio.trig(this.events.onDragZoomEnd);
+      this.hooks.onDragZoomEnd();
     }
     this.isDragAndZoom = false;
   }
@@ -171,7 +169,7 @@ export default class Mouse {
     const posX = isScale ? 0 : ev.deltaX * 2;
     const posY = isScale ? 0 : ev.deltaY * 2;
 
-    this.context.radio.trig(this.events.onWheel, scaleDx, posX, posY);
+    this.hooks.onWheel(scaleDx, posX, posY);
   };
 
   startPointAdd() {

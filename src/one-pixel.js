@@ -1,4 +1,3 @@
-import radio from '@/system/radio';
 import Context from '@/class/Context';
 import Canvas from '@/class/Canvas';
 import Touch from '@/class/Touch';
@@ -10,6 +9,7 @@ import DrawCtrl from '@/controllers/DrawCtrl';
 import TransformCtrl from '@/controllers/TransformCtrl';
 import DragZoomCtrl from '@/controllers/DragZoomCtrl';
 import WheelCtrl from '@/controllers/WheelCtrl';
+import Hook from '@/class/Hook';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -18,7 +18,7 @@ export default class OnePixel {
     const context = new Context({
       config,
       element,
-      radio: radio('core:one-pixel'),
+      hook: Hook,
     });
 
     this.context = context;
@@ -58,7 +58,7 @@ export default class OnePixel {
   redraw() {
     // wait images loaded
     if (!this.context.images.isLoaded) {
-      this.context.radio.one(this.context.images.events.onLoaded, () => {
+      this.context.images.hookLoaded.one(() => {
         this.redraw();
       });
       return;
