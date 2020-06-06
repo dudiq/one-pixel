@@ -12,22 +12,23 @@ import DragZoomCtrl from '@/controllers/DragZoomCtrl';
 import WheelCtrl from '@/controllers/WheelCtrl';
 
 export default class OnePixel {
-  constructor(elementId, config) {
+  constructor(config) {
     this.config = config;
-    const element = document.querySelector(elementId);
+    const buffer = typeof config.container === 'string'
+      ? document.querySelector(config.container)
+      : config.container;
     const childElement = document.createElement('div');
     childElement.style = 'position:absolute; left:0; right:0; top:0; bottom:0; overflow:hidden;';
-    element.appendChild(childElement);
+    buffer.appendChild(childElement);
     let helper;
     if (config.showHelper) {
       helper = document.createElement('div');
       helper.style = 'position:absolute; top:0; right:0; border:1px solid gray;display:inline-block;';
-      element.appendChild(helper);
+      buffer.appendChild(helper);
     }
     const context = new Context({
       config,
       helper,
-      parentElement: element,
       element: childElement,
       hook: Hook,
     });

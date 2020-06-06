@@ -4,8 +4,8 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="../dist/one-pixel.umd.js"></script>
-  <script src="../dist/editor-umd.js"></script>
+  <script src="../dist/core.umd.js"></script>
+  <script src="../dist/plugin-editor.umd.js"></script>
 </head>
 <body>
 <style>
@@ -83,7 +83,8 @@
     localStorage.setItem(KEY, storeData);
   }
 
-  const instance = new Pixel('#place', {
+  const instance = new Pixel({
+    container: '#place',
     penColor: 'red',
     penWidth: 2,
     eraseWidth: 8,
