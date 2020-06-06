@@ -82,13 +82,13 @@ export default [
     output: [
       {
         ...outputConf,
-        file: resolveFile('./dist/editor-umd.js'),
+        file: resolveFile('./dist/plugin-editor-umd.js'),
         name: 'one-pixel-editor',
         format: 'umd',
       },
       {
         ...outputConf,
-        file: resolveFile('./dist/editor-esm.js'),
+        file: resolveFile('./dist/plugin-editor-esm.js'),
         format: 'esm',
       },
     ],

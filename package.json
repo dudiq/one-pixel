@@ -1,8 +1,8 @@
 {
   "name": "one-pixel-2d",
   "version": "0.0.1",
-  "main": "./dist/one-pixel.umd.js",
-  "module": "./dist/one-pixel.esm.js",
+  "main": "./dist/core.umd.js",
+  "module": "./dist/core.esm.js",
   "description": "one pixel 2d engine for simple drawings",
   "repository": {
     "type": "git",
