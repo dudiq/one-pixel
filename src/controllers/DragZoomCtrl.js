@@ -91,7 +91,7 @@ export default class DragZoomCtrl {
     const initials = this.initials;
     const transformCtrl = context.transformCtrl;
 
-    if (context.touch.isFingerOne()) {
+    if (!mouse.isMiddleButton && context.touch.isFingerOne()) {
       this.updateInitials();
     }
 
@@ -114,7 +114,7 @@ export default class DragZoomCtrl {
       nextScale,
     );
 
-    const style = this.context.element.style;
+    const style = this.context.drawCtrl.screenCanvas.canvasElement.style;
     style.transform = transformCtrl.getCssMatrix(newMatrix);
     style.transformOrigin = `${initials.offset.x}px ${initials.offset.y}px`;
   };
@@ -124,7 +124,7 @@ export default class DragZoomCtrl {
   };
 
   dropStyles = () => {
-    const style = this.context.element.style;
+    const style = this.context.drawCtrl.screenCanvas.canvasElement.style;
     style.transform = '';
     style.transformOrigin = '';
   };

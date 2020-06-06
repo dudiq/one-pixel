@@ -44,6 +44,7 @@ export default class Mouse {
     this.isMoved = false;
     this.isFirstMove = false;
     this.isDragAndZoom = false;
+    this.isMiddleButton = false;
 
     this.pointFirst = {
       x: 0,
@@ -74,6 +75,7 @@ export default class Mouse {
    * @param {Event} ev
    */
   updatePoints(ev) {
+    this.isMiddleButton = ev.button === 1 || ev.which === 2;
     this.context.touch.processTouchByIndex(ev, 0, this.setPointFirst);
     this.context.touch.processTouchByIndex(ev, 1, this.setPointSecond);
   }
@@ -93,7 +95,7 @@ export default class Mouse {
     this.context.touch.collectTouches(ev);
     this.updatePoints(ev);
     this.startPointAdd();
-    if (ev.which === 3) return;
+    if (ev.which === 3 || ev.button === 2) return;
     this.isDown = true;
   };
 
@@ -110,7 +112,7 @@ export default class Mouse {
 
     if (
       !this.isDragAndZoom
-      && (ev.which === 2 || !this.context.touch.isFingerOne())
+      && (this.isMiddleButton || !this.context.touch.isFingerOne())
     ) {
       this.isDragAndZoom = true;
       this.hooks.onDragZoomStart();

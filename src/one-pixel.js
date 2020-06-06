@@ -15,9 +15,13 @@ export default class OnePixel {
   constructor(elementId, config) {
     this.config = config;
     const element = document.querySelector(elementId);
+    const childElement = document.createElement('div');
+    childElement.style = 'position:absolute; left:0; right:0; top:0; bottom:0; overflow:hidden;';
+    element.appendChild(childElement);
     const context = new Context({
       config,
-      element,
+      parentElement: element,
+      element: childElement,
       hook: Hook,
     });
 

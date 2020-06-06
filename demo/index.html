@@ -18,7 +18,7 @@
     height: 100%;
   }
 
-  .container {
+  .is-abso {
     position: absolute;
     top: 0;
     left: 0;
@@ -30,7 +30,7 @@
     position: relative;
   }
 </style>
-<div class="container" id="place"></div>
+<div class="is-abso" id="place"></div>
 <div class="controls">
   <button id="reset">reset</button>
   <button id="erase">eraser</button>
@@ -87,6 +87,10 @@
     penColor: 'red',
     penWidth: 2,
     eraseWidth: 8,
+    area: {
+      width: 2000,
+      height: 2000,
+    },
     lineCap: 'round',
     uuid: 'some-browser-id',
     plugins: [

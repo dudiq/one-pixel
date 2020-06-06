@@ -64,8 +64,8 @@ export default class Touch {
         }
       }
     } else {
-      x = ev.offsetX || ev.pageX;
-      y = ev.offsetY || ev.pageY;
+      x = ev.clientX;
+      y = ev.clientY;
       cb(x, y);
     }
   }
