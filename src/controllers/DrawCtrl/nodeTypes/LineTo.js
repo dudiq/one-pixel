@@ -1,8 +1,8 @@
 import BaseNode from './BaseNode';
 
 export default class LineTo extends BaseNode {
-  render(node) {
-    const ctx = this.context.canvas.canvasContext;
+  render(canvas, node) {
+    const ctx = canvas.canvasContext;
     const points = node.p;
     const config = this.context.config;
 

@@ -1,6 +1,8 @@
 export default class BaseTool {
-  constructor(context) {
+  constructor(context, editor) {
+    if (!editor) throw new Error('editor is not passed to new Tool for Editor');
     this.context = context;
+    this.editor = editor;
     this.points = [];
   }
 

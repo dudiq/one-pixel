@@ -4,8 +4,8 @@ import BaseTool from './BaseTool';
 const THRESHOLD_DISTANCE = 10;
 
 export default class PenTool extends BaseTool {
-  constructor(context) {
-    super(context);
+  constructor(context, editor) {
+    super(context, editor);
     this.config = context.config;
   }
 
@@ -14,12 +14,13 @@ export default class PenTool extends BaseTool {
     this.points = [];
     this.points.push(point.x, point.y);
 
-    const ctx = this.context.canvas.canvasContext;
+    const ctx = this.editor.editorCanvas.canvasContext;
     ctx.beginPath();
     ctx.strokeStyle = this.config.penColor;
     ctx.lineWidth = this.config.penWidth;
     ctx.lineCap = this.config.lineCap;
     ctx.moveTo(point.x, point.y);
+    this.editor.redraw();
   }
 
   onMouseMove(point) {
@@ -35,15 +36,17 @@ export default class PenTool extends BaseTool {
 
     this.points.push(point.x, point.y);
 
-    const ctx = this.context.canvas.canvasContext;
+    const ctx = this.editor.editorCanvas.canvasContext;
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
+
+    this.editor.redraw();
   }
 
   onMouseEnd(point) {
     point = this.getPoint(point);
     this.points.push(point.x, point.y);
-    const ctx = this.context.canvas.canvasContext;
+    const ctx = this.editor.editorCanvas.canvasContext;
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
     ctx.closePath();
@@ -52,5 +55,6 @@ export default class PenTool extends BaseTool {
       t: NODE_TYPES.NODE_LINE,
       p: [...this.points],
     });
+    this.context.drawCtrl.redraw();
   }
 }

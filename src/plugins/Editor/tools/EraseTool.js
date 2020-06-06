@@ -5,10 +5,9 @@ const CLIP_WIDTH = 6;
 const CLIP_WIDTH_HALF = CLIP_WIDTH / 2;
 
 export default class EraseTool extends BaseTool {
-  constructor(context) {
-    super(context);
+  constructor(context, editor) {
+    super(context, editor);
     this.config = context.config;
-    this.currentNodeId = '';
   }
 
   onMouseStart() {

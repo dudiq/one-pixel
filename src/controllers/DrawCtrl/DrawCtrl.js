@@ -1,13 +1,15 @@
-import Canvas from '@/class/Canvas';
-
-import renderNodes from './renderNodes';
+import rendererFabric from './rendererFabric';
 
 const PORTION_LENGTH = 2000;
 
 export default class DrawCtrl {
   constructor(context) {
     this.context = context;
-    this.drawPlace = new Canvas(context);
+    const canvasLevel = context.canvasLevel;
+    this.screenCanvas = canvasLevel.createCanvas();
+    this.nodeCanvas = canvasLevel.createCanvas();
+    canvasLevel.addCanvas(this.nodeCanvas);
+
     this.timerId = null;
     this.hookDrawEnd = context.hook.createHook();
     this.hookResize = context.hook.createHook();
@@ -17,30 +19,25 @@ export default class DrawCtrl {
       renderNodeIndex: 0,
     };
 
-    this.renderNodes = renderNodes(context);
+    this.nodeRenderers = rendererFabric(context);
 
     window.addEventListener('resize', this.onResize, false);
   }
 
   init() {
     const el = this.context.element;
-    const canvas = this.drawPlace.canvasElement;
-    el.appendChild(canvas);
-    const w = el.clientWidth;
-    const h = el.clientHeight;
-    this.meta.w = w;
-    this.meta.h = h;
-    this.drawPlace.setSize(w, h);
-    this.context.canvas.setSize(w, h);
+    el.appendChild(this.screenCanvas.canvasElement);
+    this.updateSize();
   }
 
   renderNode = node => {
-    const renderer = this.renderNodes[node.t];
+    const renderer = this.nodeRenderers[node.t];
     if (!renderer) {
       throw new Error(`not defined draw type ${renderer}`);
     }
 
-    renderer.render(node);
+    const canvas = this.nodeCanvas;
+    renderer.render(canvas, node);
   };
 
   asyncDrawPortion = () => {
@@ -69,13 +66,14 @@ export default class DrawCtrl {
   }
 
   drawBuffer() {
-    this.drawPlace.clearCanvas(0, 0, this.meta.w, this.meta.h);
-    this.drawPlace.canvasContext.drawImage(
-      this.context.canvas.canvasElement,
-      0,
-      0,
-    );
+    this.screenCanvas.clearCanvas(0, 0, this.meta.w, this.meta.h);
+
+    this.context.canvasLevel.forEachLevels(this.asyncDrawBuffer);
   }
+
+  asyncDrawBuffer = canvas => {
+    this.screenCanvas.canvasContext.drawImage(canvas.canvasElement, 0, 0);
+  };
 
   onDrawEnd() {
     this.drawBuffer();
@@ -96,7 +94,11 @@ export default class DrawCtrl {
     const y = rect.p1[1];
     const w = rect.p2[0] - rect.p1[0];
     const h = rect.p2[1] - rect.p1[1];
-    this.context.canvas.clearCanvas(x, y, w, h);
+
+    const levels = this.context.canvasLevel.getLevels();
+    for (let i = 0, l = levels.length; i < l; i++) {
+      levels[i].canvas.clearCanvas(x, y, w, h);
+    }
 
     this.renderNext();
   }
@@ -106,30 +108,50 @@ export default class DrawCtrl {
   }
 
   onResize = () => {
+    if (!this.isDimensionChanged()) {
+      return;
+    }
+    this.updateSize();
+    this.drawBuffer();
+    this.redraw();
+    this.hookResize(this.meta.w, this.meta.h);
+  };
+
+  isDimensionChanged() {
     const element = this.context.element;
-    const canvasElement = this.context.canvas.canvasElement;
+    const canvasElement = this.screenCanvas.canvasElement;
     const w = element.clientWidth;
     const h = element.clientHeight;
     if (w === canvasElement.width && h === canvasElement.height) {
-      return;
+      return false;
     }
+    return true;
+  }
+
+  updateSize() {
+    const context = this.context;
+    const transformCtrl = context.transformCtrl;
+    const element = context.element;
+    const w = element.clientWidth;
+    const h = element.clientHeight;
+
     this.meta.w = w;
     this.meta.h = h;
 
-    const offset = this.context.transformCtrl.offset();
+    const offset = transformCtrl.offset();
     const x = offset.x;
     const y = offset.y;
-    const scale = this.context.transformCtrl.scale();
-    this.context.transformCtrl.transform(0, 0, 1);
-    this.context.canvas.setSize(w, h);
-    this.context.transformCtrl.transform(x, y, scale);
+    const scale = transformCtrl.scale();
+    transformCtrl.transform(0, 0, 1);
+    const levels = context.canvasLevel.getLevels();
+    for (let i = 0, l = levels.length; i < l; i++) {
+      levels[i].canvas.setSize(w, h);
+    }
 
-    this.drawPlace.setSize(w, h);
-    this.drawBuffer();
-    this.hookResize(w, h);
+    transformCtrl.transform(x, y, scale);
 
-    this.redraw();
-  };
+    this.screenCanvas.setSize(w, h);
+  }
 
   destroy() {
     window.removeEventListener('resize', this.onResize, false);

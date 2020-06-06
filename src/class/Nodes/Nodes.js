@@ -45,9 +45,11 @@ export default class Nodes {
     if (node.t === NODE_TYPES.NODE_IMAGE) {
       this.context.images.addImage(node);
     }
+
     if (node.t === NODE_TYPES.NODE_REMOVE) {
       this.dropNodesMap[node.v] = true;
     }
+
     this.context.bbox.addBbox(node);
     this.nodes.push(node);
   }

@@ -1,9 +1,17 @@
-import Canvas from '@/class/Canvas';
-import BaseTool from './Tools/BaseTool';
-import PenTool from './Tools/PenTool';
-import EraseTool from './Tools/EraseTool';
+import BaseTool from './tools/BaseTool';
+import PenTool from './tools/PenTool';
+import EraseTool from './tools/EraseTool';
 
 // http://perfectionkills.com/exploring-canvas-drawing-techniques/
+
+function toolsFabric(context, editor, tools) {
+  const res = {};
+  for (const key in tools) {
+    const ToolClass = tools[key];
+    res[key] = new ToolClass(context, editor);
+  }
+  return res;
+}
 
 export default class Editor {
   static pluginName = 'editor';
@@ -12,13 +20,14 @@ export default class Editor {
     this.context = context;
     this.hookAddNode = context.hook.createHook();
 
-    this.editorCanvas = new Canvas(context);
+    this.editorCanvas = context.canvasLevel.createCanvas();
+    context.canvasLevel.addCanvas(this.editorCanvas);
 
-    this.tools = {
-      base: new BaseTool(context),
-      pen: new PenTool(context),
-      erase: new EraseTool(context),
-    };
+    this.tools = toolsFabric(context, this, {
+      base: BaseTool,
+      pen: PenTool,
+      erase: EraseTool,
+    });
 
     this.tool = this.tools.pen;
     this.isClicked = false;
@@ -26,17 +35,9 @@ export default class Editor {
     this.bindMouse();
   }
 
-  init() {
-    this.context.drawCtrl.hookResize.on(this.onResize);
-  }
-
   setTool(toolName) {
     if (this.tools[toolName]) this.tool = this.tools[toolName];
   }
-
-  onResize = (w, h) => {
-    this.editorCanvas.setSize(w, h);
-  };
 
   bindMouse() {
     const context = this.context;
@@ -61,8 +62,9 @@ export default class Editor {
     if (!this.isClicked) return;
     this.isClicked = false;
     this.tool.onMouseEnd(point);
-    this.context.drawCtrl.redraw();
   };
+
+  redraw() {}
 
   createNewNode(node) {
     if (!node) return;

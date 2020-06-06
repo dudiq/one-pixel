@@ -1,15 +1,15 @@
 import Context from '@/class/Context';
-import Canvas from '@/class/Canvas';
+import CanvasLevel from '@/class/CanvasLevel';
 import Touch from '@/class/Touch';
 import Mouse from '@/class/Mouse';
 import Nodes from '@/class/Nodes';
 import Images from '@/class/Images';
+import Hook from '@/class/Hook';
 
 import DrawCtrl from '@/controllers/DrawCtrl';
 import TransformCtrl from '@/controllers/TransformCtrl';
 import DragZoomCtrl from '@/controllers/DragZoomCtrl';
 import WheelCtrl from '@/controllers/WheelCtrl';
-import Hook from '@/class/Hook';
 
 export default class OnePixel {
   constructor(elementId, config) {
@@ -24,7 +24,7 @@ export default class OnePixel {
     this.context = context;
 
     context.registerModules({
-      canvas: Canvas,
+      canvasLevel: CanvasLevel,
       touch: Touch,
       mouse: Mouse,
       nodes: Nodes,

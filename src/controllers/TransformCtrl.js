@@ -82,7 +82,10 @@ export default class TransformsCtrl {
   setMatrix(matrix) {
     this.matrix = matrix;
     this.inverse = inverse(this.matrix);
-    this.context.canvas.setTransform(matrix);
+    const levels = this.context.canvasLevel.getLevels();
+    for (let i = 0, l = levels.length; i < l; i++) {
+      levels[i].canvas.setTransform(matrix);
+    }
   }
 
   getNewMatrix(x, y, scaleVal) {
