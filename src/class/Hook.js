@@ -20,10 +20,6 @@ const methods = {
     cbs.push(one);
   },
   off(cb) {
-    if (!cb) {
-      this.clean();
-      return;
-    }
     const pos = this.cbs.indexOf(cb);
     pos != -1 && this.cbs.splice(pos, 1);
   },

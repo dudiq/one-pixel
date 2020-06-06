@@ -125,4 +125,9 @@ export default class Touch {
       cb.call(this, touchId);
     }
   }
+
+  destroy() {
+    this.touchesList.length = 0;
+    this.touchesMap = {};
+  }
 }

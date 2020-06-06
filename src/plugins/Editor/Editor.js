@@ -75,4 +75,8 @@ export default class Editor {
     this.context.nodes.clearRemoved();
     this.hookAddNode(node);
   }
+
+  destroy() {
+    this.hookAddNode.clean();
+  }
 }

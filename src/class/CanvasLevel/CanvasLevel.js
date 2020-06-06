@@ -4,8 +4,6 @@ export default class CanvasLevel {
   constructor(context) {
     this.context = context;
     this.levels = [];
-
-    window.addEventListener('resize', this.onResize, false);
   }
 
   createCanvas() {
@@ -23,5 +21,9 @@ export default class CanvasLevel {
 
   getLevels() {
     return this.levels;
+  }
+
+  destroy() {
+    this.levels.length = 0;
   }
 }

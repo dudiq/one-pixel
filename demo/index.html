@@ -40,15 +40,13 @@
   <button id="moveright">-></button>
   <button id="moveleft"><-</button>
   <button id="movetop">^</button>
-  <button id="movebottom">_</button>
+  <button id="movebottom">_</button> ||
+  <button id="recreate">recreate</button>
 </div>
 
 <script>
-  const Pixel = window['one-pixel-2d'].default;
-  const EditorPlugin = window['one-pixel-editor'].default;
   const KEY = 'data-demo-one-pixel';
 
-  const storedVal = localStorage.getItem(KEY);
   const basicData = [
     {
       i: '3-ch',
@@ -70,12 +68,6 @@
 
   let initialData = [...basicData];
 
-  try {
-    const parsedJson = JSON.parse(storedVal);
-    initialData = parsedJson.val;
-  } catch (e) {
-  }
-
   function saveData() {
     const storeData = JSON.stringify({
       val: initialData,
@@ -83,32 +75,49 @@
     localStorage.setItem(KEY, storeData);
   }
 
-  const instance = new Pixel({
-    container: '#place',
-    penColor: 'red',
-    penWidth: 2,
-    eraseWidth: 8,
-    area: {
-      width: 2000,
-      height: 2000,
-    },
-    lineCap: 'round',
-    uuid: 'some-browser-id',
-    showHelper: true,
-    plugins: [
-      EditorPlugin,
-    ],
-  });
+  function createEngine() {
+    const Pixel = window['one-pixel-2d'].default;
+    const EditorPlugin = window['one-pixel-editor'].default;
 
-  instance.context.editor.hookAddNode.on(node => {
-    console.log(node);
-    initialData.push(node);
-    saveData();
-  });
+    const storedVal = localStorage.getItem(KEY);
 
-  instance.setData(initialData);
+    try {
+      const parsedJson = JSON.parse(storedVal);
+      initialData = parsedJson.val;
+    } catch (e) {
+    }
 
-  instance.redraw();
+
+    const res = new Pixel({
+      container: '#place',
+      penColor: 'red',
+      penWidth: 2,
+      eraseWidth: 8,
+      area: {
+        width: 2000,
+        height: 2000,
+      },
+      lineCap: 'round',
+      uuid: 'some-browser-id',
+      showHelper: true,
+      plugins: [
+        EditorPlugin,
+      ],
+    });
+
+    res.context.editor.hookAddNode.on(node => {
+      console.log(node);
+      initialData.push(node);
+      saveData();
+    });
+
+    res.setData(initialData);
+
+    res.redraw();
+    return res;
+  }
+
+  instance = createEngine();
 
   document.querySelector('#reset').addEventListener('click', () => {
     initialData = [...basicData];
@@ -163,6 +172,11 @@
     offset.y = offset.y + 10;
     instance.context.transformCtrl.offset(offset.x, offset.y);
     instance.context.drawCtrl.redraw();
+  });
+
+  document.querySelector('#recreate').addEventListener('click', () => {
+    instance.destroy();
+    instance = createEngine();
   });
 </script>
 </body>

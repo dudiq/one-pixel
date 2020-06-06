@@ -68,12 +68,12 @@ export default class Nodes {
     return ret;
   }
 
-  processNodes(startIndex, len, cb) {
-    const nodes = this.nodes;
-    if (len === 0) return;
+  getNodes() {
+    return this.nodes;
+  }
 
-    for (let i = startIndex; i < len; i++) {
-      cb(nodes[i], i);
-    }
+  destroy() {
+    this.dropNodesMap = {};
+    this.clearNodes();
   }
 }

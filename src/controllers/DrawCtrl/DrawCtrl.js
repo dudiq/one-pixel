@@ -25,12 +25,12 @@ export default class DrawCtrl {
   }
 
   init() {
-    const el = this.context.element;
+    const el = this.context.container.getPlace();
     el.appendChild(this.screenCanvas.canvasElement);
     this.updateSize();
   }
 
-  renderNode = node => {
+  renderNode(node) {
     const renderer = this.nodeRenderers[node.t];
     if (!renderer) {
       throw new Error(`not defined draw type ${renderer}`);
@@ -38,7 +38,7 @@ export default class DrawCtrl {
 
     const canvas = this.nodeCanvas;
     renderer.render(canvas, node);
-  };
+  }
 
   asyncDrawPortion = () => {
     const nodes = this.context.nodes;
@@ -46,7 +46,11 @@ export default class DrawCtrl {
     const len = nodes.getLength();
     const endIndex = Math.min(startIndex + PORTION_LENGTH, len);
 
-    nodes.processNodes(this.meta.renderNodeIndex, endIndex, this.renderNode);
+    const nodeList = nodes.getNodes();
+    for (let i = this.meta.renderNodeIndex; i < endIndex; i++) {
+      this.renderNode(nodeList[i], i);
+    }
+
     const nextStart = startIndex + PORTION_LENGTH;
     this.meta.renderNodeIndex += PORTION_LENGTH;
     if (nextStart >= len) {
@@ -88,8 +92,8 @@ export default class DrawCtrl {
     const rect = this.context.transformCtrl.getClearRect(
       0,
       0,
-      this.context.element.clientWidth,
-      this.context.element.clientHeight,
+      this.context.container.getWidth(),
+      this.context.container.getHeight(),
     );
     const x = rect.p1[0];
     const y = rect.p1[1];
@@ -119,10 +123,10 @@ export default class DrawCtrl {
   };
 
   isDimensionChanged() {
-    const element = this.context.element;
+    const container = this.context.container;
     const canvasElement = this.screenCanvas.canvasElement;
-    const w = element.clientWidth;
-    const h = element.clientHeight;
+    const w = container.getWidth();
+    const h = container.getHeight();
     if (w === canvasElement.width && h === canvasElement.height) {
       return false;
     }
@@ -132,9 +136,9 @@ export default class DrawCtrl {
   updateSize() {
     const context = this.context;
     const transformCtrl = context.transformCtrl;
-    const element = context.element;
-    const w = element.clientWidth;
-    const h = element.clientHeight;
+    const container = context.container;
+    const w = container.getWidth();
+    const h = container.getHeight();
 
     this.meta.w = w;
     this.meta.h = h;
@@ -155,6 +159,9 @@ export default class DrawCtrl {
   }
 
   destroy() {
+    clearTimeout(this.timerId);
+    this.hookRenderEnd.clean();
+    this.hookResize.clean();
     window.removeEventListener('resize', this.onResize, false);
   }
 }

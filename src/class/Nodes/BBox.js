@@ -49,4 +49,8 @@ export default class BBox {
   removeBboxById(id) {
     delete this.bboxes[id];
   }
+
+  destroy() {
+    this.bboxes = {};
+  }
 }

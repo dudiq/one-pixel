@@ -1,6 +1,6 @@
 export default class Context {
   constructor(modules = {}) {
-    this.modulesKeys = {};
+    this.modulesKeys = [];
     this.registerModules(modules);
   }
 
@@ -9,7 +9,7 @@ export default class Context {
     if (this[moduleName]) throw new Error('module already registered');
 
     this[moduleName] = typeof Module === 'function' ? new Module(this) : Module;
-    this.modulesKeys[moduleName] = true;
+    this.modulesKeys.push(moduleName);
   }
 
   registerModules(modules) {
@@ -20,15 +20,19 @@ export default class Context {
 
   init() {
     const modules = this.modulesKeys;
-    for (const key in modules) {
-      this[key].init && this[key].init();
+    for (let i = 0, l = modules.length; i < l; i++) {
+      const key = modules[i];
+      const mod = this[key];
+      mod && mod.init && mod.init();
     }
   }
 
   destroy() {
     const modules = this.modulesKeys;
-    for (const key in modules) {
-      this[key].destroy();
+    for (let i = 0, l = modules.length; i < l; i++) {
+      const key = modules[i];
+      const mod = this[key];
+      mod && mod.destroy && mod.destroy();
     }
   }
 }

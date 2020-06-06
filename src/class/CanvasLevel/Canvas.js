@@ -5,7 +5,6 @@ export default class Canvas {
 
     const ctx = canvas.getContext('2d');
     this.canvasContext = ctx;
-    this.ctx = ctx;
 
     ctx.mozImageSmoothingEnabled = false;
     ctx.webkitImageSmoothingEnabled = false;
@@ -33,6 +32,4 @@ export default class Canvas {
     const ctx = this.canvasContext;
     ctx.clearRect(x, y, w, h);
   }
-
-  destroy() {}
 }

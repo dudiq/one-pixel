@@ -27,8 +27,6 @@ function inThreshold(p1, p2) {
 export default class Mouse {
   constructor(context) {
     this.context = context;
-    const element = context.element;
-    this.element = element;
 
     this.hooks = context.hook.createHooks({
       onStart: 'onStart',
@@ -67,7 +65,7 @@ export default class Mouse {
       y: 0,
     };
 
-    this.addEvents(element);
+    this.addEvents();
   }
 
   /**
@@ -191,36 +189,44 @@ export default class Mouse {
   }
 
   addEvents() {
-    this.element.addEventListener('touchstart', this.onMouseStart, false);
-    this.element.addEventListener('touchmove', this.onMouseMove, false);
-    this.element.addEventListener('touchend', this.onMouseEnd, false);
-    this.element.addEventListener('touchleave', this.onMouseEnd, false);
-    this.element.addEventListener('touchcancel', this.onMouseEnd, false);
+    const element = this.context.container.getPlace();
 
-    this.element.addEventListener('mousedown', this.onMouseStart, false);
-    this.element.addEventListener('mousemove', this.onMouseMove, false);
-    this.element.addEventListener('mouseup', this.onMouseEnd, false);
-    this.element.addEventListener('mouseleave', this.onMouseEnd, false);
+    element.addEventListener('touchstart', this.onMouseStart, false);
+    element.addEventListener('touchmove', this.onMouseMove, false);
+    element.addEventListener('touchend', this.onMouseEnd, false);
+    element.addEventListener('touchleave', this.onMouseEnd, false);
+    element.addEventListener('touchcancel', this.onMouseEnd, false);
+
+    element.addEventListener('mousedown', this.onMouseStart, false);
+    element.addEventListener('mousemove', this.onMouseMove, false);
+    element.addEventListener('mouseup', this.onMouseEnd, false);
+    element.addEventListener('mouseleave', this.onMouseEnd, false);
 
     window.addEventListener('wheel', this.onWheel, { passive: false });
   }
 
   removeEvents() {
-    this.element.removeEventListener('touchstart', this.onMouseStart, false);
-    this.element.removeEventListener('touchmove', this.onMouseMove, false);
-    this.element.removeEventListener('touchend', this.onMouseEnd, false);
-    this.element.removeEventListener('touchleave', this.onMouseEnd, false);
-    this.element.removeEventListener('touchcancel', this.onMouseEnd, false);
+    const element = this.context.container.getPlace();
 
-    this.element.removeEventListener('mousedown', this.onMouseStart, false);
-    this.element.removeEventListener('mousemove', this.onMouseMove, false);
-    this.element.removeEventListener('mouseup', this.onMouseEnd, false);
-    this.element.removeEventListener('mouseleave', this.onMouseEnd, false);
+    element.removeEventListener('touchstart', this.onMouseStart, false);
+    element.removeEventListener('touchmove', this.onMouseMove, false);
+    element.removeEventListener('touchend', this.onMouseEnd, false);
+    element.removeEventListener('touchleave', this.onMouseEnd, false);
+    element.removeEventListener('touchcancel', this.onMouseEnd, false);
+
+    element.removeEventListener('mousedown', this.onMouseStart, false);
+    element.removeEventListener('mousemove', this.onMouseMove, false);
+    element.removeEventListener('mouseup', this.onMouseEnd, false);
+    element.removeEventListener('mouseleave', this.onMouseEnd, false);
 
     window.removeEventListener('wheel', this.onWheel);
   }
 
   destroy() {
     this.removeEvents();
+    for (const key in this.hooks) {
+      const hook = this.hooks[key];
+      hook.clean();
+    }
   }
 }

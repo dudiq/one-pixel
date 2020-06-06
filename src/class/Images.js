@@ -53,4 +53,9 @@ export default class Images {
       this.processLoading();
     };
   }
+
+  destroy() {
+    this.images = {};
+    this.hookLoaded.clean();
+  }
 }
