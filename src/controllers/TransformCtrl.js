@@ -3,12 +3,22 @@ import {
   translate,
   identity,
   inverse,
+  transform,
   compose,
   applyToPoint,
   toCSS,
+  fromObject,
 } from 'transformation-matrix';
 
 const MAX_SIZE = 2000;
+
+const getSVGPoint = (value, viewerX, viewerY) => {
+  const matrix = fromObject(value);
+
+  const inverseMatrix = inverse(matrix);
+
+  return applyToPoint(inverseMatrix, { x: viewerX, y: viewerY });
+};
 
 export default class TransformsCtrl {
   constructor(context) {
@@ -87,7 +97,7 @@ export default class TransformsCtrl {
   }
 
   getNewMatrix(x, y, scaleVal) {
-    return compose(translate(x, y), scale(scaleVal, scaleVal));
+    return compose(translate(x, y), scale(scaleVal));
   }
 
   getCssMatrix(matrix) {
@@ -144,12 +154,29 @@ export default class TransformsCtrl {
     return y;
   }
 
+  transformByCenter(dx, dy, cx, cy, scaleFactor) {
+    const scaleVal = this.getFloorScale(this.scale() * scaleFactor);
+
+    const svgPoint = getSVGPoint(this.matrix, cx, cy);
+
+    const matrix = transform(
+      fromObject(this.matrix),
+      translate(dx, dy),
+      translate(svgPoint.x, svgPoint.y),
+      scale(scaleFactor),
+      translate(-svgPoint.x, -svgPoint.y),
+    );
+
+    this.setMatrix(matrix);
+    this.updateMeta(scaleVal);
+  }
+
   transform(x, y, scaleVal) {
     scaleVal = this.getFloorScale(scaleVal);
     x = this.getPointX(x);
     y = this.getPointY(y);
 
-    const matrix = compose(translate(x, y), scale(scaleVal, scaleVal));
+    const matrix = compose(translate(x, y), scale(scaleVal));
     this.setMatrix(matrix);
     this.updateMeta(scaleVal);
   }

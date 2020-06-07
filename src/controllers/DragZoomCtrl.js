@@ -42,6 +42,13 @@ export default class DragZoomCtrl {
       scale: 1,
       initialDistance: 1,
     };
+    this.last = {
+      x: 0,
+      y: 0,
+    };
+    this.drags = {
+      prevDist: 0,
+    };
   }
 
   init() {
@@ -67,6 +74,11 @@ export default class DragZoomCtrl {
 
     initials.point.x = getCenter(pointFirst.x, pointSecond.x);
     initials.point.y = getCenter(pointFirst.y, pointSecond.y);
+    this.last.x = initials.point.x;
+    this.last.y = initials.point.y;
+    const drags = this.drags;
+    drags.prevDist = initials.initialDistance;
+
     initials.scale = this.context.transformCtrl.scale();
     initials.offset.x = offset.x;
     initials.offset.y = offset.y;
@@ -96,27 +108,34 @@ export default class DragZoomCtrl {
     }
 
     const nextDist = this.getNextDistance();
-    const prevDist = initials.initialDistance;
+    const prevDist = this.drags.prevDist;
+
+    this.drags.prevDist = nextDist;
+
     const k = prevDist === 0 || nextDist === 0 ? 1 : nextDist / prevDist;
     const nextScale = initials.scale * k;
 
     const centerX = getCenter(mouse.pointFirst.x, mouse.pointSecond.x);
     const centerY = getCenter(mouse.pointFirst.y, mouse.pointSecond.y);
 
-    const dx = centerX - initials.point.x;
-    const dy = centerY - initials.point.y;
+    const dx = centerX - this.last.x;
+    const dy = centerY - this.last.y;
 
-    const newMatrix = transformCtrl.getNewMatrix(dx, dy, k);
+    this.last.x = centerX;
+    this.last.y = centerY;
 
-    transformCtrl.transform(
-      initials.offset.x + dx,
-      initials.offset.y + dy,
-      nextScale,
+    const newMatrix = transformCtrl.getNewMatrix(
+      centerX - this.initials.point.x,
+      centerY - this.initials.point.y,
+      k,
     );
 
-    const style = this.context.drawCtrl.screenCanvas.canvasElement.style;
-    style.transform = transformCtrl.getCssMatrix(newMatrix);
-    style.transformOrigin = `${initials.offset.x}px ${initials.offset.y}px`;
+    transformCtrl.transformByCenter(dx, dy, centerX, centerY, k);
+
+    this.context.drawCtrl.render();
+    // const style = this.context.drawCtrl.screenCanvas.canvasElement.style;
+    // style.transform = transformCtrl.getCssMatrix(newMatrix);
+    // style.transformOrigin = `${centerX}px ${centerY}px`;
   };
 
   onDragZoomEnd = () => {

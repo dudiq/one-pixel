@@ -85,6 +85,10 @@ export default class DrawCtrl {
     this.hookRenderEnd();
   }
 
+  render() {
+    this.redraw();
+  }
+
   redraw() {
     clearTimeout(this.timerId);
     this.meta.renderNodeIndex = 0;
