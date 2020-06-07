@@ -13,8 +13,15 @@ function toolsFabric(context, editor, tools) {
   return res;
 }
 
+const TOOLS = {
+  pen: 'pen',
+  erase: 'erase',
+};
+
 export default class Editor {
   static pluginName = 'editor';
+
+  static TOOLS = TOOLS;
 
   constructor(context) {
     this.context = context;
@@ -25,8 +32,8 @@ export default class Editor {
 
     this.tools = toolsFabric(context, this, {
       base: BaseTool,
-      pen: PenTool,
-      erase: EraseTool,
+      [TOOLS.pen]: PenTool,
+      [TOOLS.erase]: EraseTool,
     });
 
     this.tool = this.tools.pen;

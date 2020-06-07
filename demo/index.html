@@ -46,6 +46,8 @@
 
 <script>
   const KEY = 'data-demo-one-pixel';
+  const Pixel = window['one-pixel-2d'].default;
+  const EditorPlugin = window['one-pixel-editor'].default;
 
   const basicData = [
     {
@@ -76,8 +78,6 @@
   }
 
   function createEngine() {
-    const Pixel = window['one-pixel-2d'].default;
-    const EditorPlugin = window['one-pixel-editor'].default;
 
     const storedVal = localStorage.getItem(KEY);
 
@@ -127,11 +127,11 @@
   });
 
   document.querySelector('#pen').addEventListener('click', () => {
-    instance.setTool('pen');
+    instance.setTool(EditorPlugin.TOOLS.pen);
   });
 
   document.querySelector('#erase').addEventListener('click', () => {
-    instance.setTool('erase');
+    instance.setTool(EditorPlugin.TOOLS.erase);
   });
 
   let scale = 1;

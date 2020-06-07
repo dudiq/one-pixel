@@ -52,10 +52,6 @@ export default class OnePixel {
     context.nodes.setNodes(nodes);
   }
 
-  setTool(toolName) {
-    this.context.editor.setTool(toolName);
-  }
-
   redraw() {
     // TODO: rename to render
     // wait images loaded

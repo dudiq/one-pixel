@@ -11,6 +11,7 @@ export default class Container {
     const childElement = document.createElement('div');
     childElement.style = 'position:absolute; left:0; right:0; top:0; bottom:0; overflow:hidden;';
     buffer.appendChild(childElement);
+    this.childElement = childElement;
 
     let helper;
     if (config.showHelper) {
@@ -23,7 +24,7 @@ export default class Container {
   }
 
   getPlace() {
-    return this.buffer;
+    return this.childElement;
   }
 
   getWidth() {
