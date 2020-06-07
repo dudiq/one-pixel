@@ -50,11 +50,12 @@ export default class PenTool extends BaseTool {
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
     ctx.closePath();
-    this.context.editor.createNewNode({
+    const newNode = {
       i: this.getNewId(),
       t: NODE_TYPES.NODE_LINE,
       p: [...this.points],
-    });
+    };
+    this.context.editor.createNewNode(newNode);
     this.context.drawCtrl.redraw();
   }
 }

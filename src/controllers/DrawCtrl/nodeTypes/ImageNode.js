@@ -1,6 +1,10 @@
 import BaseNode from './BaseNode';
 
 export default class ImageNode extends BaseNode {
+  /**
+   * @param {Canvas} canvas
+   * @param {NodeImage} node
+   */
   render(canvas, node) {
     const context = this.context;
     const imageMeta = context.images.getImageById(node.i);

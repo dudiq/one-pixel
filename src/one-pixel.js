@@ -57,6 +57,7 @@ export default class OnePixel {
   }
 
   redraw() {
+    // TODO: rename to render
     // wait images loaded
     if (!this.context.images.isLoaded) {
       this.context.images.hookLoaded.one(() => {
