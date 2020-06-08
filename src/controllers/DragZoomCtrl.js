@@ -52,7 +52,7 @@ export default class DragZoomCtrl {
   }
 
   init() {
-    this.context.renderCtrl.hookRenderEnd.on(this.dropStyles);
+    this.context.renderCtrl.hooks.onRenderEnd.on(this.dropStyles);
   }
 
   onDragZoomStart = () => {

@@ -11,8 +11,9 @@ export default class RenderCtrl {
     canvasLevel.addCanvas(this.nodeCanvas);
 
     this.timerId = null;
-    this.hookRenderEnd = context.hook.createHook();
-    this.hookResize = context.hook.createHook();
+    this.hooks = context.hook.createHooks({
+      onRenderEnd: 'onRenderEnd',
+    });
     this.meta = {
       w: 0,
       h: 0,
@@ -83,7 +84,7 @@ export default class RenderCtrl {
   onRenderEnd() {
     // TODO: add reqAnimationFrame for remove flickering when run hooks
     this.renderToScreen();
-    this.hookRenderEnd();
+    this.hooks.onRenderEnd();
   }
 
   render() {
@@ -120,7 +121,6 @@ export default class RenderCtrl {
     this.updateSize();
     this.renderToScreen();
     this.render();
-    this.hookResize(this.meta.w, this.meta.h);
   };
 
   isDimensionChanged() {
@@ -161,8 +161,7 @@ export default class RenderCtrl {
 
   destroy() {
     clearTimeout(this.timerId);
-    this.hookRenderEnd.clean();
-    this.hookResize.clean();
+    this.context.hook.cleanHooks(this.hooks);
     window.removeEventListener('resize', this.onResize, false);
   }
 }
