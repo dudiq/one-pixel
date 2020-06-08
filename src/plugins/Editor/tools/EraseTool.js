@@ -36,6 +36,6 @@ export default class EraseTool extends BaseTool {
       v: node.i,
     });
 
-    this.context.drawCtrl.redraw();
+    this.context.drawCtrl.render();
   }
 }

@@ -68,17 +68,16 @@ export default class OnePixel {
     context.nodes.setNodes(nodes);
   }
 
-  redraw() {
-    // TODO: rename to render
+  render() {
     // wait images loaded
     if (!this.context.images.isLoaded) {
       this.context.images.hookLoaded.one(() => {
-        this.redraw();
+        this.render();
       });
       return;
     }
 
-    this.context.drawCtrl.redraw();
+    this.context.drawCtrl.render();
   }
 
   destroy() {

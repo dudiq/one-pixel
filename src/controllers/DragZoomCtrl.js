@@ -139,7 +139,7 @@ export default class DragZoomCtrl {
   };
 
   onDragZoomEnd = () => {
-    this.context.drawCtrl.redraw();
+    this.context.drawCtrl.render();
   };
 
   dropStyles = () => {

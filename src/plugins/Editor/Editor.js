@@ -71,7 +71,7 @@ export default class Editor {
     this.tool.onMouseEnd(point);
   };
 
-  redraw() {
+  render() {
     this.context.drawCtrl.renderToScreen();
   }
 

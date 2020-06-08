@@ -20,7 +20,7 @@ export default class PenTool extends BaseTool {
     ctx.lineWidth = this.config.penWidth;
     ctx.lineCap = this.config.lineCap;
     ctx.moveTo(point.x, point.y);
-    this.editor.redraw();
+    this.editor.render();
   }
 
   onMouseMove(point) {
@@ -40,7 +40,7 @@ export default class PenTool extends BaseTool {
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
 
-    this.editor.redraw();
+    this.editor.render();
   }
 
   onMouseEnd(point) {
@@ -56,6 +56,6 @@ export default class PenTool extends BaseTool {
       p: [...this.points],
     };
     this.context.editor.createNewNode(newNode);
-    this.context.drawCtrl.redraw();
+    this.context.drawCtrl.render();
   }
 }

@@ -87,10 +87,6 @@ export default class DrawCtrl {
   }
 
   render() {
-    this.redraw();
-  }
-
-  redraw() {
     clearTimeout(this.timerId);
     this.meta.renderNodeIndex = 0;
 
@@ -123,7 +119,7 @@ export default class DrawCtrl {
     }
     this.updateSize();
     this.renderToScreen();
-    this.redraw();
+    this.render();
     this.hookResize(this.meta.w, this.meta.h);
   };
 
