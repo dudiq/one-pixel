@@ -56,6 +56,6 @@ export default class PenTool extends BaseTool {
       p: [...this.points],
     };
     this.context.editor.createNewNode(newNode);
-    this.context.drawCtrl.render();
+    this.context.renderCtrl.render();
   }
 }

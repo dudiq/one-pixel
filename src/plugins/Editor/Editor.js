@@ -72,7 +72,7 @@ export default class Editor {
   };
 
   render() {
-    this.context.drawCtrl.renderToScreen();
+    this.context.renderCtrl.renderToScreen();
   }
 
   createNewNode(node) {

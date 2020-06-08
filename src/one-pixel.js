@@ -6,7 +6,7 @@ import Nodes from '@/class/Nodes';
 import Images from '@/class/Images';
 import Hook from '@/class/Hook';
 
-import DrawCtrl from '@/controllers/DrawCtrl';
+import RenderCtrl from '@/controllers/RenderCtrl';
 import TransformCtrl from '@/controllers/TransformCtrl';
 import DragZoomCtrl from '@/controllers/DragZoomCtrl';
 import WheelCtrl from '@/controllers/WheelCtrl';
@@ -39,7 +39,7 @@ export default class OnePixel {
     });
 
     context.registerModules({
-      drawCtrl: DrawCtrl,
+      renderCtrl: RenderCtrl,
       transformCtrl: TransformCtrl,
       dragZoomCtrl: DragZoomCtrl,
       wheelCtrl: WheelCtrl,
@@ -62,7 +62,7 @@ export default class OnePixel {
 
   setData(nodes) {
     const context = this.context;
-    context.drawCtrl.stopDraw();
+    context.renderCtrl.stopDraw();
     context.nodes.clearNodes();
     context.images.clearImages();
     context.nodes.setNodes(nodes);
@@ -77,7 +77,7 @@ export default class OnePixel {
       return;
     }
 
-    this.context.drawCtrl.render();
+    this.context.renderCtrl.render();
   }
 
   destroy() {

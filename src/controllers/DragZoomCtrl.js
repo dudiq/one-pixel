@@ -52,7 +52,7 @@ export default class DragZoomCtrl {
   }
 
   init() {
-    this.context.drawCtrl.hookRenderEnd.on(this.dropStyles);
+    this.context.renderCtrl.hookRenderEnd.on(this.dropStyles);
   }
 
   onDragZoomStart = () => {
@@ -132,18 +132,18 @@ export default class DragZoomCtrl {
 
     transformCtrl.transformByCenter(dx, dy, centerX, centerY, k);
 
-    this.context.drawCtrl.render();
-    // const style = this.context.drawCtrl.screenCanvas.canvasElement.style;
+    this.context.renderCtrl.render();
+    // const style = this.context.renderCtrl.screenCanvas.canvasElement.style;
     // style.transform = transformCtrl.getCssMatrix(newMatrix);
     // style.transformOrigin = `${centerX}px ${centerY}px`;
   };
 
   onDragZoomEnd = () => {
-    this.context.drawCtrl.render();
+    this.context.renderCtrl.render();
   };
 
   dropStyles = () => {
-    const style = this.context.drawCtrl.screenCanvas.canvasElement.style;
+    const style = this.context.renderCtrl.screenCanvas.canvasElement.style;
     style.transform = '';
     style.transformOrigin = '';
   };

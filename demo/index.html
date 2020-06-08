@@ -138,13 +138,13 @@
   document.querySelector('#zoomin').addEventListener('click', () => {
     scale += 0.1;
     instance.context.transformCtrl.scale(scale);
-    instance.context.drawCtrl.render();
+    instance.context.renderCtrl.render();
   });
 
   document.querySelector('#zoomout').addEventListener('click', () => {
     scale -= 0.1;
     instance.context.transformCtrl.scale(scale);
-    instance.context.drawCtrl.render();
+    instance.context.renderCtrl.render();
   });
 
   const offset = {
@@ -153,25 +153,25 @@
   document.querySelector('#moveright').addEventListener('click', () => {
     offset.x = offset.x + 10;
     instance.context.transformCtrl.offset(offset.x, offset.y);
-    instance.context.drawCtrl.render();
+    instance.context.renderCtrl.render();
   });
 
   document.querySelector('#moveleft').addEventListener('click', () => {
     offset.x = offset.x - 10;
     instance.context.transformCtrl.offset(offset.x, offset.y);
-    instance.context.drawCtrl.render();
+    instance.context.renderCtrl.render();
   });
 
   document.querySelector('#movetop').addEventListener('click', () => {
     offset.y = offset.y - 10;
     instance.context.transformCtrl.offset(offset.x, offset.y);
-    instance.context.drawCtrl.render();
+    instance.context.renderCtrl.render();
   });
 
   document.querySelector('#movebottom').addEventListener('click', () => {
     offset.y = offset.y + 10;
     instance.context.transformCtrl.offset(offset.x, offset.y);
-    instance.context.drawCtrl.render();
+    instance.context.renderCtrl.render();
   });
 
   document.querySelector('#recreate').addEventListener('click', () => {

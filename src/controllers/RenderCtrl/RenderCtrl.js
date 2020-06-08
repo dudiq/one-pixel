@@ -1,8 +1,8 @@
-import rendererFabric from './rendererFabric';
+import nodeRenderFabric from './nodeRenderFabric';
 
 const PORTION_LENGTH = 2000;
 
-export default class DrawCtrl {
+export default class RenderCtrl {
   constructor(context) {
     this.context = context;
     const canvasLevel = context.canvasLevel;
@@ -19,7 +19,7 @@ export default class DrawCtrl {
       renderNodeIndex: 0,
     };
 
-    this.nodeRenderers = rendererFabric(context);
+    this.nodeRendersMap = nodeRenderFabric(context);
 
     window.addEventListener('resize', this.onResize, false);
   }
@@ -31,7 +31,7 @@ export default class DrawCtrl {
   }
 
   renderNode(node) {
-    const renderer = this.nodeRenderers[node.t];
+    const renderer = this.nodeRendersMap[node.t];
     if (!renderer) {
       throw new Error(`not defined draw type ${renderer}`);
     }

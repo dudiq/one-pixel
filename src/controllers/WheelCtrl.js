@@ -12,6 +12,6 @@ export default class WheelCtrl {
       offset.y - dy,
       scale - scaleDx,
     );
-    this.context.drawCtrl.render();
+    this.context.renderCtrl.render();
   };
 }
