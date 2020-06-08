@@ -43,10 +43,11 @@ export default class DrawCtrl {
   asyncDrawPortion = () => {
     const nodes = this.context.nodes;
     const startIndex = this.meta.renderNodeIndex;
-    const len = nodes.getLength();
-    const endIndex = Math.min(startIndex + PORTION_LENGTH, len);
 
     const nodeList = nodes.getNodes();
+    const len = nodeList.length;
+    const endIndex = Math.min(startIndex + PORTION_LENGTH, len);
+
     for (let i = this.meta.renderNodeIndex; i < endIndex; i++) {
       this.renderNode(nodeList[i], i);
     }

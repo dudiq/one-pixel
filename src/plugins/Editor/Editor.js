@@ -79,7 +79,7 @@ export default class Editor {
     if (!node) return;
 
     this.context.nodes.addNode(node);
-    this.context.nodes.clearRemoved();
+    this.context.nodeRemoveCtrl.clearRemoved();
     this.hookAddNode(node);
   }
 

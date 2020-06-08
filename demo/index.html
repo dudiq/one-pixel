@@ -127,11 +127,11 @@
   });
 
   document.querySelector('#pen').addEventListener('click', () => {
-    instance.setTool(EditorPlugin.TOOLS.pen);
+    instance.plugins.editor.setTool(EditorPlugin.TOOLS.pen);
   });
 
   document.querySelector('#erase').addEventListener('click', () => {
-    instance.setTool(EditorPlugin.TOOLS.erase);
+    instance.plugins.editor.setTool(EditorPlugin.TOOLS.erase);
   });
 
   let scale = 1;

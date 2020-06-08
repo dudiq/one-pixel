@@ -1,9 +1,15 @@
+import { NODE_TYPES } from '@/constants';
+
 export default class Images {
   constructor(context) {
     this.context = context;
     this.images = {};
     this.isLoaded = false;
     this.hookLoaded = context.hook.createHook();
+  }
+
+  init() {
+    this.context.nodes.hooks.onAdd.on(this.addImage);
   }
 
   getImageById(id) {
@@ -28,7 +34,8 @@ export default class Images {
     this.isLoaded = false;
   }
 
-  addImage(node) {
+  addImage = node => {
+    if (node.t !== NODE_TYPES.NODE_IMAGE) return;
     const id = node.i;
     if (this.images[id]) return;
     const image = new Image();
@@ -52,7 +59,7 @@ export default class Images {
       meta.isLoaded = true;
       this.processLoading();
     };
-  }
+  };
 
   destroy() {
     this.images = {};

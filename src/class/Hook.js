@@ -44,6 +44,14 @@ export default class Hook {
     return handler;
   }
 
+  cleanHooks(hooks) {
+    for (const key in hooks) {
+      const hook = hooks[key];
+      hook.clean();
+      delete hooks[key];
+    }
+  }
+
   createHooks(names) {
     for (const key in names) {
       names[key] = this.createHook(names[key]);

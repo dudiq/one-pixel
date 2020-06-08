@@ -224,9 +224,6 @@ export default class Mouse {
 
   destroy() {
     this.removeEvents();
-    for (const key in this.hooks) {
-      const hook = this.hooks[key];
-      hook.clean();
-    }
+    this.context.hook.cleanHooks(this.hooks);
   }
 }

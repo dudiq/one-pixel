@@ -4,6 +4,10 @@ export default class BBox {
     this.bboxes = {};
   }
 
+  init() {
+    this.context.nodes.hooks.onAdd.on(this.addBbox);
+  }
+
   createBbox() {
     return {
       minx: Infinity,
@@ -28,7 +32,7 @@ export default class BBox {
     bbox.h = bbox.maxy - bbox.miny;
   }
 
-  addBbox(node) {
+  addBbox = node => {
     if (!node.p) return;
 
     const bbox = this.createBbox();
@@ -40,7 +44,7 @@ export default class BBox {
     }
     this.updateBboxDimensions(bbox);
     this.bboxes[node.i] = bbox;
-  }
+  };
 
   getBboxById(id) {
     return this.bboxes[id];
