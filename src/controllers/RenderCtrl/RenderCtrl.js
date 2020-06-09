@@ -28,6 +28,7 @@ export default class RenderCtrl {
   init() {
     const el = this.context.container.getPlace();
     el.appendChild(this.screenCanvas.canvasElement);
+    this.context.nodes.hooks.onSetStart.on(this.stopRender);
     this.updateSize();
   }
 
@@ -110,9 +111,9 @@ export default class RenderCtrl {
     this.renderNext();
   }
 
-  stopDraw() {
+  stopRender = () => {
     clearTimeout(this.timerId);
-  }
+  };
 
   onResize = () => {
     if (!this.isDimensionChanged()) {

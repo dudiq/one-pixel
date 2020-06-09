@@ -3,24 +3,18 @@ export default class Container {
     this.context = context;
     const config = context.config;
 
-    const buffer = typeof config.container === 'string'
-      ? document.querySelector(config.container)
-      : config.container;
-    this.buffer = buffer;
+    this.appendTo(config.container);
 
     const childElement = document.createElement('div');
     childElement.style = 'position:absolute; left:0; right:0; top:0; bottom:0; overflow:hidden;';
-    buffer.appendChild(childElement);
+    this.buffer.appendChild(childElement);
     this.childElement = childElement;
+  }
 
-    let helper;
-    if (config.showHelper) {
-      helper = document.createElement('div');
-      helper.style = 'position:absolute; top:0; right:0; border:1px solid gray;display:inline-block;';
-      buffer.appendChild(helper);
-      // TODO: move helper to separated class
-      context.register('helper', helper);
-    }
+  appendTo(el) {
+    const buffer = typeof el === 'string' ? document.querySelector(el) : el;
+    this.buffer = buffer || document.createDocumentFragment();
+    buffer.appendChild(this.childElement);
   }
 
   getPlace() {

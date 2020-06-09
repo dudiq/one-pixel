@@ -38,12 +38,17 @@ export default class Editor {
 
     this.tool = this.tools.pen;
     this.isClicked = false;
+    this.isEnabled = true;
 
     this.bindMouse();
   }
 
   setTool(toolName) {
     if (this.tools[toolName]) this.tool = this.tools[toolName];
+  }
+
+  enable(val) {
+    this.isEnabled = !!val;
   }
 
   bindMouse() {
@@ -55,17 +60,20 @@ export default class Editor {
   }
 
   onMouseStart = point => {
+    if (!this.isEnabled) return;
     if (this.isClicked) return;
     this.tool.onMouseStart(point);
     this.isClicked = true;
   };
 
   onMouseMove = point => {
+    if (!this.isEnabled) return;
     if (!this.isClicked) return;
     this.tool.onMouseMove(point);
   };
 
   onMouseEnd = point => {
+    if (!this.isEnabled) return;
     if (!this.isClicked) return;
     this.isClicked = false;
     this.tool.onMouseEnd(point);

@@ -6,6 +6,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import alias from 'rollup-plugin-alias';
 import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
+import copy from 'rollup-plugin-copy';
 import replace from 'rollup-plugin-replace';
 
 import pkg from './package.json';
@@ -52,6 +53,9 @@ const createConf = ({ input, output }) => ({
       include: /node_modules/,
     }),
     !withSourceMaps && terser(),
+    copy({
+      targets: [{ src: 'package.json', dest: 'dist' }],
+    }),
   ],
   watch: {
     exclude: ['node_modules/**'],
@@ -65,13 +69,13 @@ export default [
     output: [
       {
         ...outputConf,
-        file: resolveFile(pkg.main),
+        file: resolveFile(`./dist/${pkg.main}`),
         name: pkg.name,
         format: 'umd',
       },
       {
         ...outputConf,
-        file: resolveFile(pkg.module),
+        file: resolveFile(`./dist/${pkg.module}`),
         format: 'esm',
       },
     ],

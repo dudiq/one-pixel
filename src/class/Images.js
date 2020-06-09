@@ -10,6 +10,7 @@ export default class Images {
 
   init() {
     this.context.nodes.hooks.onAdd.on(this.addImage);
+    this.context.nodes.hooks.onSetStart.on(this.clearImages);
   }
 
   getImageById(id) {
@@ -29,10 +30,10 @@ export default class Images {
     this.hookLoaded();
   }
 
-  clearImages() {
+  clearImages = () => {
     this.images = {};
     this.isLoaded = false;
-  }
+  };
 
   addImage = node => {
     if (node.t !== NODE_TYPES.NODE_IMAGE) return;

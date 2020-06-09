@@ -28,6 +28,7 @@ export default class OnePixel {
 
     this.context = context;
 
+    // at first, register classes
     context.registerModules({
       canvasLevel: CanvasLevel,
       touch: Touch,
@@ -38,6 +39,7 @@ export default class OnePixel {
       bbox: BBox,
     });
 
+    // then register controllers
     context.registerModules({
       renderCtrl: RenderCtrl,
       transformCtrl: TransformCtrl,
@@ -49,6 +51,7 @@ export default class OnePixel {
 
     const plugins = {};
 
+    // and at the last - plugins
     (config.plugins || []).forEach(plugin => {
       const pluginName = plugin.pluginName;
       context.register(pluginName, plugin);
@@ -60,12 +63,12 @@ export default class OnePixel {
     context.init();
   }
 
+  appendTo(el) {
+    this.context.container.appendTo(el);
+  }
+
   setData(nodes) {
-    const context = this.context;
-    context.renderCtrl.stopDraw();
-    context.nodes.clearNodes();
-    context.images.clearImages();
-    context.nodes.setNodes(nodes);
+    this.context.nodes.setNodes(nodes);
   }
 
   render() {
