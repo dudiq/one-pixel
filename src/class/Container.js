@@ -3,12 +3,11 @@ export default class Container {
     this.context = context;
     const config = context.config;
 
-    this.appendTo(config.container);
-
     const childElement = document.createElement('div');
     childElement.style = 'position:absolute; left:0; right:0; top:0; bottom:0; overflow:hidden;';
-    this.buffer.appendChild(childElement);
     this.childElement = childElement;
+
+    this.appendTo(config.container);
   }
 
   appendTo(el) {
