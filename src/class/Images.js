@@ -5,7 +5,9 @@ export default class Images {
     this.context = context;
     this.images = {};
     this.isLoaded = false;
-    this.hookLoaded = context.hook.createHook();
+    this.hooks = context.hook.createHooks({
+      onLoaded: 'onLoaded',
+    });
   }
 
   init() {
@@ -27,7 +29,7 @@ export default class Images {
 
     this.isLoaded = true;
 
-    this.hookLoaded();
+    this.hooks.onLoaded();
   }
 
   clearImages = () => {
@@ -64,6 +66,6 @@ export default class Images {
 
   destroy() {
     this.images = {};
-    this.hookLoaded.clean();
+    this.context.hook.cleanHooks(this.hooks);
   }
 }

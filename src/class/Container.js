@@ -8,6 +8,12 @@ export default class Container {
     this.childElement = childElement;
 
     this.appendTo(config.container);
+
+    this.meta = {
+      w: 0,
+      h: 0,
+    };
+    this.recalc();
   }
 
   appendTo(el) {
@@ -20,12 +26,17 @@ export default class Container {
     return this.childElement;
   }
 
+  recalc() {
+    this.meta.w = this.buffer.clientWidth;
+    this.meta.h = this.buffer.clientHeight;
+  }
+
   getWidth() {
-    return this.buffer.clientWidth;
+    return this.meta.w;
   }
 
   getHeight() {
-    return this.buffer.clientHeight;
+    return this.meta.h;
   }
 
   destroy() {

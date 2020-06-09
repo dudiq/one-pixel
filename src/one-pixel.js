@@ -74,7 +74,7 @@ export default class OnePixel {
   render() {
     // wait images loaded
     if (!this.context.images.isLoaded) {
-      this.context.images.hookLoaded.one(() => {
+      this.context.images.hooks.onLoaded.one(() => {
         this.render();
       });
       return;

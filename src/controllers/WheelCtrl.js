@@ -4,13 +4,15 @@ export default class WheelCtrl {
     context.mouse.hooks.onWheel.on(this.onWheel);
   }
 
-  onWheel = (scaleDx, dx, dy) => {
+  onWheel = (scaleDx, dx, dy, cx, cy) => {
     const scale = this.context.transformCtrl.scale();
-    const offset = this.context.transformCtrl.offset();
-    this.context.transformCtrl.transform(
-      offset.x - dx,
-      offset.y - dy,
-      scale - scaleDx,
+    const newScale = scale - scaleDx;
+    this.context.transformCtrl.transformByCenter(
+      -dx,
+      -dy,
+      cx,
+      cy,
+      newScale / scale,
     );
     this.context.renderCtrl.render();
   };

@@ -124,11 +124,11 @@ export default class DragZoomCtrl {
     this.last.x = centerX;
     this.last.y = centerY;
 
-    const newMatrix = transformCtrl.getNewMatrix(
-      centerX - this.initials.point.x,
-      centerY - this.initials.point.y,
-      k,
-    );
+    // const newMatrix = transformCtrl.getNewMatrix(
+    //   centerX - this.initials.point.x,
+    //   centerY - this.initials.point.y,
+    //   k,
+    // );
 
     transformCtrl.transformByCenter(dx, dy, centerX, centerY, k);
 

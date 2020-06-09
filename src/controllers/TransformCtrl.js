@@ -10,8 +10,6 @@ import {
   fromObject,
 } from 'transformation-matrix';
 
-const MAX_SIZE = 2000;
-
 const getSVGPoint = (value, viewerX, viewerY) => {
   const matrix = fromObject(value);
 
@@ -20,11 +18,12 @@ const getSVGPoint = (value, viewerX, viewerY) => {
   return applyToPoint(inverseMatrix, { x: viewerX, y: viewerY });
 };
 
+const DX_CHANGE = 50;
+
 export default class TransformsCtrl {
   constructor(context) {
     this.context = context;
     this.matrix = null;
-    this.setMatrix(identity());
 
     /**
      * @private
@@ -55,7 +54,44 @@ export default class TransformsCtrl {
         max: 3.5,
       },
     };
+
+    this.availableBbox = {
+      minx: 0,
+      miny: 0,
+      maxx: 0,
+      maxy: 0,
+      w: 0,
+      h: 0,
+    };
+
+    this.setMatrix(identity(), 1);
   }
+
+  init() {
+    this.context.images.hooks.onLoaded.on(this.onAddAllNodes);
+  }
+
+  /**
+   * @private
+   */
+  onAddAllNodes = () => {
+    const nodes = this.context.nodes.getNodes();
+    const node = nodes[0];
+
+    if (!node) return;
+    const image = this.context.images.getImageById(node.i);
+
+    if (!image) return;
+    const dx = 0;
+    this.availableBbox = {
+      minx: -dx,
+      miny: -dx,
+      maxx: image.width + dx,
+      maxy: image.height + dx,
+      w: image.width,
+      h: image.height,
+    };
+  };
 
   /**
    * @param {PointObjectNotation | PointArrayNotation} point
@@ -86,23 +122,59 @@ export default class TransformsCtrl {
   /**
    * @private
    * @param matrix
+   * @param scaleVal
    */
-  setMatrix(matrix) {
+  setMatrix(matrix, scaleVal) {
     this.matrix = matrix;
     this.inverse = inverse(this.matrix);
     const levels = this.context.canvasLevel.getLevels();
     for (let i = 0, l = levels.length; i < l; i++) {
       levels[i].canvas.setTransform(matrix);
     }
+    this.updateMeta(scaleVal);
   }
 
-  getNewMatrix(x, y, scaleVal) {
-    return compose(translate(x, y), scale(scaleVal));
+  isOffsetCorrect(matrix) {
+    return true;
+    // const availableBbox = this.availableBbox;
+    // const container = this.context.container;
+    // const w = container.getWidth();
+    // const h = container.getHeight();
+    // const bboxw = availableBbox.w;
+    // const bboxh = availableBbox.h;
+    // // matrix = inverse(matrix);
+    // const leftTop = applyToPoint(matrix, { x: availableBbox.minx, y: availableBbox.miny });
+    // const rightBottom = applyToPoint(matrix, { x: availableBbox.maxx, y: availableBbox.maxy });
+    //
+    // const scaledW = rightBottom.x - leftTop.x;
+    // const scaledH = rightBottom.y - leftTop.y;
+    //
+    // if (scaledW >= bboxw) {
+    //   if (leftTop.x < -DX_CHANGE) return false;
+    //   if (rightBottom.x > w + DX_CHANGE) return false;
+    // }
+    //
+    // if (scaledH >= bboxh) {
+    //   if (leftTop.y < -DX_CHANGE) return false;
+    //   if (rightBottom.y > h + DX_CHANGE) return false;
+    // }
+
+    // // if (scaledW < bboxw) {
+    // //   if (leftTop.x > DX_CHANGE) return false;
+    // // }
+    //
+    // // if (leftTop.x < 0 || rightBottom.x > w) return false;
+    // // if (leftTop.y < 0 || rightBottom.y > h) return false;
+    // return true;
   }
 
-  getCssMatrix(matrix) {
-    return toCSS(matrix);
-  }
+  // getNewMatrix(x, y, scaleVal) {
+  //   return compose(translate(x, y), scale(scaleVal));
+  // }
+  //
+  // getCssMatrix(matrix) {
+  //   return toCSS(matrix);
+  // }
 
   /**
    * @private
@@ -155,7 +227,9 @@ export default class TransformsCtrl {
   }
 
   transformByCenter(dx, dy, cx, cy, scaleFactor) {
-    const scaleVal = this.getFloorScale(this.scale() * scaleFactor);
+    const oldScale = this.scale();
+    const scaleVal = this.getFloorScale(oldScale * scaleFactor);
+    scaleFactor = scaleVal / oldScale;
 
     const svgPoint = getSVGPoint(this.matrix, cx, cy);
 
@@ -167,26 +241,28 @@ export default class TransformsCtrl {
       translate(-svgPoint.x, -svgPoint.y),
     );
 
-    this.setMatrix(matrix);
-    this.updateMeta(scaleVal);
+    const isOffsetCorrect = this.isOffsetCorrect(matrix);
+    if (!isOffsetCorrect) return;
+
+    this.setMatrix(matrix, scaleVal);
   }
 
+  /**
+   * @private
+   * @param {number} x
+   * @param {number} y
+   * @param {number} scaleVal
+   */
   transform(x, y, scaleVal) {
     scaleVal = this.getFloorScale(scaleVal);
     x = this.getPointX(x);
     y = this.getPointY(y);
 
     const matrix = compose(translate(x, y), scale(scaleVal));
-    this.setMatrix(matrix);
-    this.updateMeta(scaleVal);
-  }
 
-  getClearRect(x, y, w, h) {
-    const p1 = this.getTransPoint([x, y]);
-    const p2 = this.getTransPoint([w, h]);
-    return {
-      p1,
-      p2,
-    };
+    const isOffsetCorrect = this.isOffsetCorrect(matrix);
+    if (!isOffsetCorrect) return;
+
+    this.setMatrix(matrix, scaleVal);
   }
 }

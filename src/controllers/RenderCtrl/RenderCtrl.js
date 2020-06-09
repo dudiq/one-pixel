@@ -88,11 +88,20 @@ export default class RenderCtrl {
     this.hooks.onRenderEnd();
   }
 
+  getClearRect(x, y, w, h) {
+    const p1 = this.context.transformCtrl.getTransPoint([x, y]);
+    const p2 = this.context.transformCtrl.getTransPoint([w, h]);
+    return {
+      p1,
+      p2,
+    };
+  }
+
   render() {
     clearTimeout(this.timerId);
     this.meta.renderNodeIndex = 0;
 
-    const rect = this.context.transformCtrl.getClearRect(
+    const rect = this.getClearRect(
       0,
       0,
       this.context.container.getWidth(),
@@ -127,6 +136,7 @@ export default class RenderCtrl {
   isDimensionChanged() {
     const container = this.context.container;
     const canvasElement = this.screenCanvas.canvasElement;
+    container.recalc();
     const w = container.getWidth();
     const h = container.getHeight();
     if (w === canvasElement.width && h === canvasElement.height) {

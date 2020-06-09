@@ -58,4 +58,26 @@ export default class Hook {
     }
     return names;
   }
+
+  // combineAll(hooks, cb) {
+  //   const map = {};
+  //   const combiner = index => {
+  //     map[index] = true;
+  //     debugger;
+  //     for (const key in map) {
+  //       if (map[key] === false) return;
+  //     }
+  //
+  //     cb();
+  //     for (const key in map) {
+  //       map[key] = false;
+  //     }
+  //   };
+  //   hooks.forEach((hook, index) => {
+  //     map[index] = false;
+  //     hook.on(() => {
+  //       combiner(index);
+  //     });
+  //   });
+  // }
 }
