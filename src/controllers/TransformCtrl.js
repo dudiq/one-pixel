@@ -43,12 +43,6 @@ export default class TransformsCtrl {
     };
 
     this.limitations = {
-      offset: {
-        minx: -100,
-        miny: -100,
-        maxx: 200,
-        maxy: 200,
-      },
       scale: {
         min: 0.5,
         max: 3.5,
@@ -191,30 +185,6 @@ export default class TransformsCtrl {
     return Math.floor(scaleVal * 1000) / 1000;
   }
 
-  /**
-   * @private
-   * @param {number} x
-   * @return {number}
-   */
-  getPointX(x) {
-    const limits = this.limitations.offset;
-    if (limits.maxx < x) return limits.maxx;
-    if (limits.minx > x) return limits.minx;
-    return x;
-  }
-
-  /**
-   * @private
-   * @param {number} y
-   * @return {number}
-   */
-  getPointY(y) {
-    const limits = this.limitations.offset;
-    if (limits.maxy < y) return limits.maxy;
-    if (limits.miny > y) return limits.miny;
-    return y;
-  }
-
   transformByCenter(dx, dy, cx, cy, scaleFactor) {
     const oldScale = this.scale();
     const scaleVal = this.getFloorScale(oldScale * scaleFactor);
@@ -244,8 +214,6 @@ export default class TransformsCtrl {
    */
   transform(x, y, scaleVal) {
     scaleVal = this.getFloorScale(scaleVal);
-    x = this.getPointX(x);
-    y = this.getPointY(y);
 
     const matrix = compose(translate(x, y), scale(scaleVal));
 
