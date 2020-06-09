@@ -18,7 +18,7 @@ const getSVGPoint = (value, viewerX, viewerY) => {
   return applyToPoint(inverseMatrix, { x: viewerX, y: viewerY });
 };
 
-const DX_CHANGE = 50;
+const DX_CHANGE = 1000;
 
 export default class TransformsCtrl {
   constructor(context) {
@@ -135,37 +135,26 @@ export default class TransformsCtrl {
   }
 
   isOffsetCorrect(matrix) {
-    return true;
-    // const availableBbox = this.availableBbox;
-    // const container = this.context.container;
-    // const w = container.getWidth();
-    // const h = container.getHeight();
-    // const bboxw = availableBbox.w;
-    // const bboxh = availableBbox.h;
-    // // matrix = inverse(matrix);
-    // const leftTop = applyToPoint(matrix, { x: availableBbox.minx, y: availableBbox.miny });
-    // const rightBottom = applyToPoint(matrix, { x: availableBbox.maxx, y: availableBbox.maxy });
-    //
-    // const scaledW = rightBottom.x - leftTop.x;
-    // const scaledH = rightBottom.y - leftTop.y;
-    //
-    // if (scaledW >= bboxw) {
-    //   if (leftTop.x < -DX_CHANGE) return false;
-    //   if (rightBottom.x > w + DX_CHANGE) return false;
-    // }
-    //
-    // if (scaledH >= bboxh) {
-    //   if (leftTop.y < -DX_CHANGE) return false;
-    //   if (rightBottom.y > h + DX_CHANGE) return false;
-    // }
+    const availableBbox = this.availableBbox;
+    const container = this.context.container;
+    const w = container.getWidth();
+    const h = container.getHeight();
 
-    // // if (scaledW < bboxw) {
-    // //   if (leftTop.x > DX_CHANGE) return false;
-    // // }
-    //
-    // // if (leftTop.x < 0 || rightBottom.x > w) return false;
-    // // if (leftTop.y < 0 || rightBottom.y > h) return false;
-    // return true;
+    const leftTop = applyToPoint(matrix, {
+      x: availableBbox.minx,
+      y: availableBbox.miny,
+    });
+    const rightBottom = applyToPoint(matrix, {
+      x: availableBbox.maxx,
+      y: availableBbox.maxy,
+    });
+
+    if (leftTop.x < -DX_CHANGE) return false;
+    if (rightBottom.x > w + DX_CHANGE) return false;
+
+    if (leftTop.y < -DX_CHANGE) return false;
+    if (rightBottom.y > h + DX_CHANGE) return false;
+    return true;
   }
 
   // getNewMatrix(x, y, scaleVal) {
