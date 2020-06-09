@@ -222,4 +222,30 @@ export default class TransformsCtrl {
 
     this.setMatrix(matrix, scaleVal);
   }
+
+  fitToScreen() {
+    const availableBbox = this.availableBbox;
+    const container = this.context.container;
+    const w = container.getWidth();
+    const h = container.getHeight();
+
+    const modelW = availableBbox.w;
+    const modelH = availableBbox.h;
+    const newScaleX = w / modelW;
+    const newScaleY = h / modelH;
+    let newScale = Math.min(newScaleX, newScaleY);
+    newScale = this.getFloorScale(newScale);
+    if (newScale) {
+      this.scale(1);
+      this.offset(0, 0);
+
+      const dx = (w - modelW) / 2;
+      const dy = (h - modelH) / 2;
+
+      const cx = modelW / 2;
+      const cy = modelH / 2;
+
+      this.transformByCenter(dx, dy, cx, cy, newScale);
+    }
+  }
 }

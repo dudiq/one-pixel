@@ -147,27 +147,4 @@ export default class DragZoomCtrl {
     style.transform = '';
     style.transformOrigin = '';
   };
-
-  fitToScreen() {
-    // var modelW = canvas.getModelWidth();
-    // var modelH = canvas.getModelHeight();
-    // var newScaleX = canvas.w / modelW;
-    // var newScaleY = canvas.h / modelH;
-    // var newScale = Math.min(newScaleX, newScaleY);
-    // newScale = scale.floorVal(newScale);
-    // if (newScale) {
-    //   //at first, set zoom for correct offset
-    //   this.zoom(100);
-    //   var off = canvas.getModelOffset();
-    //
-    //   // set center point
-    //   var cx = Math.floor(off.x + modelW/2);
-    //   var cy = Math.floor(off.y + modelH/2);
-    //   this.setOffset(-cx, -cy);
-    //
-    //   // scale to new zoom
-    //   this.zoom(newScale);
-    // }
-    // return this;
-  }
 }

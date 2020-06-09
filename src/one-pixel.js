@@ -76,6 +76,7 @@ export default class OnePixel {
     if (!this.context.images.isLoaded) {
       this.context.images.hooks.onLoaded.one(() => {
         this.render();
+        this.context.transformCtrl.fitToScreen();
       });
       return;
     }
