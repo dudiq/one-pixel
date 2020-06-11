@@ -44,7 +44,7 @@ export default class TransformsCtrl {
 
     this.limitations = {
       scale: {
-        min: 0.5,
+        min: 0.3,
         max: 3.5,
       },
     };
@@ -151,13 +151,13 @@ export default class TransformsCtrl {
     return true;
   }
 
-  // getNewMatrix(x, y, scaleVal) {
-  //   return compose(translate(x, y), scale(scaleVal));
-  // }
-  //
-  // getCssMatrix(matrix) {
-  //   return toCSS(matrix);
-  // }
+  getNewMatrix(x, y, scaleVal) {
+    return compose(translate(x, y), scale(scaleVal));
+  }
+
+  getCssMatrix(matrix) {
+    return toCSS(matrix);
+  }
 
   /**
    * @private
@@ -194,7 +194,11 @@ export default class TransformsCtrl {
 
     const matrix = transform(
       fromObject(this.matrix),
+
+      scale(1 / oldScale),
       translate(dx, dy),
+      scale(oldScale),
+
       translate(svgPoint.x, svgPoint.y),
       scale(scaleFactor),
       translate(-svgPoint.x, -svgPoint.y),

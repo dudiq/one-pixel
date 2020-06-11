@@ -57,8 +57,8 @@ export default class Touch {
         const checkTouchId = getTouchId(touches[i]);
         if (checkTouchId === touchId) {
           const evTouch = touches[i];
-          x = Math.floor(evTouch.pageX);
-          y = Math.floor(evTouch.pageY);
+          x = Math.floor(evTouch.clientX);
+          y = Math.floor(evTouch.clientY);
           cb(x, y);
           break;
         }

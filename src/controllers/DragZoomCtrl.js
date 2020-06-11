@@ -82,7 +82,11 @@ export default class DragZoomCtrl {
     initials.scale = this.context.transformCtrl.scale();
     initials.offset.x = offset.x;
     initials.offset.y = offset.y;
-    initials.matrix = this.context.transformCtrl.cloneMatrix();
+    initials.matrix = this.context.transformCtrl.getNewMatrix(
+      -offset.x,
+      -offset.y,
+      1 / this.context.transformCtrl.scale(),
+    );
   }
 
   getNextDistance() {
@@ -113,7 +117,6 @@ export default class DragZoomCtrl {
     this.drags.prevDist = nextDist;
 
     const k = prevDist === 0 || nextDist === 0 ? 1 : nextDist / prevDist;
-    const nextScale = initials.scale * k;
 
     const centerX = getCenter(mouse.pointFirst.x, mouse.pointSecond.x);
     const centerY = getCenter(mouse.pointFirst.y, mouse.pointSecond.y);
@@ -124,15 +127,20 @@ export default class DragZoomCtrl {
     this.last.x = centerX;
     this.last.y = centerY;
 
-    // const newMatrix = transformCtrl.getNewMatrix(
-    //   centerX - this.initials.point.x,
-    //   centerY - this.initials.point.y,
-    //   k,
-    // );
-
     transformCtrl.transformByCenter(dx, dy, centerX, centerY, k);
 
     this.context.renderCtrl.render();
+
+    //
+    // const newScale = transformCtrl.scale() / initials.scale;
+    //
+    // const newMatrix = transformCtrl.getNewMatrix(
+    //   centerX - this.initials.point.x,
+    //   centerY - this.initials.point.y,
+    //   newScale,
+    // );
+    //
+    // // this.context.renderCtrl.render();
     // const style = this.context.renderCtrl.screenCanvas.canvasElement.style;
     // style.transform = transformCtrl.getCssMatrix(newMatrix);
     // style.transformOrigin = `${centerX}px ${centerY}px`;

@@ -88,6 +88,14 @@ export default class RenderCtrl {
     this.hooks.onRenderEnd();
   }
 
+  /**
+   * @private
+   * @param x
+   * @param y
+   * @param w
+   * @param h
+   * @returns {{p1: PointArrayNotation, p2: PointArrayNotation}}
+   */
   getClearRect(x, y, w, h) {
     const p1 = this.context.transformCtrl.getTransPoint([x, y]);
     const p2 = this.context.transformCtrl.getTransPoint([w, h]);
@@ -97,7 +105,7 @@ export default class RenderCtrl {
     };
   }
 
-  render() {
+  clear() {
     clearTimeout(this.timerId);
     this.meta.renderNodeIndex = 0;
 
@@ -116,6 +124,10 @@ export default class RenderCtrl {
     for (let i = 0, l = levels.length; i < l; i++) {
       levels[i].canvas.clearCanvas(x, y, w, h);
     }
+  }
+
+  render() {
+    this.clear();
 
     this.renderNext();
   }

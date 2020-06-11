@@ -30,7 +30,8 @@
     position: relative;
   }
 </style>
-<div class="is-abso" id="place"></div>
+<div class="is-abso" id="place" style="position: fixed"></div>
+<input>
 <div class="controls">
   <button id="reset">reset</button>
   <button id="erase">eraser</button>
@@ -43,6 +44,10 @@
   <button id="movebottom">_</button> ||
   <button id="recreate">recreate</button>
 </div>
+<div style="height: 400px;">
+  some text
+</div>
+<input autofocus>
 
 <script>
   const KEY = 'data-demo-one-pixel';
@@ -54,7 +59,8 @@
       i: '3-ch',
       t: 'i',
       // p: [20, 20, 350, 350],
-      s: './googlelogo_color_272x92dp.png'
+      s: './ls.png',
+      //s: './googlelogo_color_272x92dp.png'
     },
     {
       i: '1-uk2d', //id

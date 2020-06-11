@@ -170,7 +170,7 @@ export default class Mouse {
     const posX = isScale ? 0 : ev.deltaX * 2;
     const posY = isScale ? 0 : ev.deltaY * 2;
 
-    this.hooks.onWheel(scaleDx, posX, posY, ev.pageX, ev.pageY);
+    this.hooks.onWheel(scaleDx, posX, posY, ev.clientX, ev.clientY);
   };
 
   startPointAdd() {
