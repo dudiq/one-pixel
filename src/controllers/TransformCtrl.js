@@ -7,7 +7,6 @@ import {
   rotateDEG,
   compose,
   applyToPoint,
-  toCSS,
   fromObject,
 } from 'transformation-matrix';
 
@@ -103,10 +102,6 @@ export default class TransformsCtrl {
     return applyToPoint(this.inverse, point);
   }
 
-  cloneMatrix() {
-    return compose(this.matrix);
-  }
-
   offset(x, y) {
     if (x === undefined || y === undefined) return this.metaOffset;
     this.transform(x, y, this.metaScale.scale);
@@ -163,14 +158,6 @@ export default class TransformsCtrl {
     if (leftTop.y < -DX_CHANGE) return false;
     if (rightBottom.y > h + DX_CHANGE) return false;
     return true;
-  }
-
-  getNewMatrix(x, y, scaleVal) {
-    return compose(translate(x, y), scale(scaleVal));
-  }
-
-  getCssMatrix(matrix) {
-    return toCSS(matrix);
   }
 
   /**
