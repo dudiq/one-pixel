@@ -195,7 +195,6 @@ export default class TransformsCtrl {
 
     const nx = dx * this.metaRotate.cos - dy * this.metaRotate.sin;
     const ny = dx * this.metaRotate.sin + dy * this.metaRotate.cos;
-    // console.log(nx, dx, 'n, d, :y', ny, dy);
 
     const matrix = transform(
       fromObject(this.matrix),
@@ -243,8 +242,6 @@ export default class TransformsCtrl {
     this.metaRotate.cos = Math.round(Math.cos(-angleDeg * (Math.PI / 180)));
     this.metaRotate.sin = Math.round(Math.sin(-angleDeg * (Math.PI / 180)));
     this.metaRotate.rotate = angleDeg;
-
-    console.log(this.metaRotate);
 
     this.setMatrix(rotateMatrix);
     this.updateMeta(matrix, scaleVal);

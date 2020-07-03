@@ -22,6 +22,7 @@ export default class DragZoomCtrl {
     };
     this.drags = {
       prevDist: 0,
+      isMultiDrag: true,
     };
   }
 
@@ -29,13 +30,16 @@ export default class DragZoomCtrl {
     this.context.renderCtrl.hooks.onRenderEnd.on(this.dropStyles);
   }
 
-  onDragZoomStart = () => {
+  onDragZoomStart = ({ isMultiDrag = true } = {}) => {
+    this.drags.isMultiDrag = isMultiDrag;
     this.updateInitials();
   };
 
   updateInitials() {
     const pointFirst = this.context.mouse.pointFirst;
-    const pointSecond = this.context.mouse.pointSecond;
+    const pointSecond = this.drags.isMultiDrag
+      ? this.context.mouse.pointSecond
+      : this.context.mouse.pointFirst;
 
     const initialDistance = getDistance(
       pointFirst.x,
@@ -67,19 +71,26 @@ export default class DragZoomCtrl {
     const mouse = context.mouse;
     const transformCtrl = context.transformCtrl;
 
-    if (!mouse.isMiddleButton && context.touch.isFingerOne()) {
+    if (
+      this.drags.isMultiDrag
+      && !mouse.isMiddleButton
+      && context.touch.isFingerOne()
+    ) {
       this.updateInitials();
     }
 
-    const nextDist = this.getNextDistance();
-    const prevDist = this.drags.prevDist;
+    let k = 1;
+    let centerX = mouse.pointFirst.x;
+    let centerY = mouse.pointFirst.y;
 
-    this.drags.prevDist = nextDist;
-
-    const k = prevDist === 0 || nextDist === 0 ? 1 : nextDist / prevDist;
-
-    const centerX = getCenter(mouse.pointFirst.x, mouse.pointSecond.x);
-    const centerY = getCenter(mouse.pointFirst.y, mouse.pointSecond.y);
+    if (this.drags.isMultiDrag) {
+      const nextDist = this.getNextDistance();
+      const prevDist = this.drags.prevDist;
+      this.drags.prevDist = nextDist;
+      k = prevDist === 0 || nextDist === 0 ? 1 : nextDist / prevDist;
+      centerX = getCenter(mouse.pointFirst.x, mouse.pointSecond.x);
+      centerY = getCenter(mouse.pointFirst.y, mouse.pointSecond.y);
+    }
 
     const dx = centerX - this.last.x;
     const dy = centerY - this.last.y;

@@ -8,7 +8,7 @@ export default class EraseTool extends BaseTool {
 
   onMouseStart() {
     this.context.dragZoomCtrl.onDragZoomStart({
-      isMultiTouch: false,
+      isMultiDrag: false,
     });
   }
 
