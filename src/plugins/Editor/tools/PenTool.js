@@ -1,7 +1,33 @@
 import { NODE_TYPES } from '@/constants';
 import BaseTool from './BaseTool';
+import simplify from '../simplify';
 
 const THRESHOLD_DISTANCE = 10;
+
+const SIMPLIFY_K = 1;
+
+const toXY = points => {
+  let pointIndex = -1;
+  const res = points.reduce((pointsList, point, index) => {
+    if (index % 2 === 0) {
+      pointIndex++;
+      pointsList.push({x: 0, y: 0});
+      pointsList[pointIndex].x = point;
+    }
+    pointsList[pointIndex].y = point;
+    return pointsList;
+  }, []);
+
+  return res;
+};
+
+const toList = (points) => {
+  return points.reduce((pointsList, point) => {
+    pointsList.push(point.x);
+    pointsList.push(point.y);
+    return pointsList;
+  }, []);
+};
 
 export default class PenTool extends BaseTool {
   constructor(context, editor) {
@@ -50,10 +76,14 @@ export default class PenTool extends BaseTool {
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
     ctx.closePath();
+
+    const newPointsXY = simplify(toXY(this.points), SIMPLIFY_K, true);
+    const newPoints = toList(newPointsXY);
+
     const newNode = {
       i: this.getNewId(),
       t: NODE_TYPES.NODE_LINE,
-      p: [...this.points],
+      p: newPoints,
     };
     this.context.editor.createNewNode(newNode);
     this.context.renderCtrl.render();
