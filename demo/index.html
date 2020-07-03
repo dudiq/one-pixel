@@ -31,11 +31,13 @@
   }
 </style>
 <div class="is-abso" id="place" style="position: fixed"></div>
-<input>
 <div class="controls">
   <button id="reset">reset</button>
   <button id="erase">eraser</button>
   <button id="pen">pen</button>
+  <button id="move">move</button>
+  <button id="rotate-left">rotate left</button>
+  <button id="rotate-right">rotate right</button>
   <button id="zoomin">+</button>
   <button id="zoomout">-</button>
   <button id="moveright">-></button>
@@ -47,7 +49,6 @@
 <div style="height: 400px;">
   some text
 </div>
-<input autofocus>
 
 <script>
   const KEY = 'data-demo-one-pixel';
@@ -59,8 +60,8 @@
       i: '3-ch',
       t: 'i',
       // p: [20, 20, 350, 350],
-      s: './ls.png',
-      //s: './googlelogo_color_272x92dp.png'
+      // s: './ls.png',
+      s: './googlelogo_color_272x92dp.png'
     },
     {
       i: '1-uk2d', //id
@@ -119,6 +120,11 @@
     res.setData(initialData);
 
     res.render();
+    res.context.renderCtrl.hooks.onRenderEnd.one(() => {
+      // res.context.transformCtrl.scale(0.5);
+      // instance.context.transformCtrl.offset(screen.width/3, screen.height/3);
+      // instance.context.renderCtrl.render();
+    });
     return res;
   }
 
@@ -130,6 +136,9 @@
     instance.render();
     saveData();
   });
+  document.querySelector('#move').addEventListener('click', () => {
+    instance.plugins.editor.setTool(EditorPlugin.TOOLS.move);
+  });
 
   document.querySelector('#pen').addEventListener('click', () => {
     instance.plugins.editor.setTool(EditorPlugin.TOOLS.pen);
@@ -137,6 +146,19 @@
 
   document.querySelector('#erase').addEventListener('click', () => {
     instance.plugins.editor.setTool(EditorPlugin.TOOLS.erase);
+  });
+
+  let rotate = 0;
+  const rotateAngle = 90;
+  document.querySelector('#rotate-right').addEventListener('click', () => {
+    rotate += rotateAngle;
+    instance.context.transformCtrl.rotate(rotate);
+    instance.context.renderCtrl.render();
+  });
+  document.querySelector('#rotate-left').addEventListener('click', () => {
+    rotate -= rotateAngle;
+    instance.context.transformCtrl.rotate(rotate);
+    instance.context.renderCtrl.render();
   });
 
   let scale = 1;

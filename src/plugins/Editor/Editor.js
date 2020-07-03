@@ -1,6 +1,7 @@
 import BaseTool from './tools/BaseTool';
 import PenTool from './tools/PenTool';
 import EraseTool from './tools/EraseTool';
+import MoveTool from './tools/MoveTool';
 
 // http://perfectionkills.com/exploring-canvas-drawing-techniques/
 
@@ -14,8 +15,16 @@ function toolsFabric(context, editor, tools) {
 }
 
 const TOOLS = {
+  move: 'move',
   pen: 'pen',
   erase: 'erase',
+};
+
+const toolClasses = {
+  base: BaseTool,
+  [TOOLS.pen]: PenTool,
+  [TOOLS.erase]: EraseTool,
+  [TOOLS.move]: MoveTool,
 };
 
 export default class Editor {
@@ -30,11 +39,7 @@ export default class Editor {
     this.editorCanvas = context.canvasLevel.createCanvas();
     context.canvasLevel.addCanvas(this.editorCanvas);
 
-    this.tools = toolsFabric(context, this, {
-      base: BaseTool,
-      [TOOLS.pen]: PenTool,
-      [TOOLS.erase]: EraseTool,
-    });
+    this.tools = toolsFabric(context, this, toolClasses);
 
     this.tool = this.tools.pen;
     this.isClicked = false;

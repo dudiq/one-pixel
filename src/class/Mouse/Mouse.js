@@ -1,16 +1,4 @@
-import Touch from '../Touch';
-
 const THRESHOLD_MOVE = 2;
-
-function getWindowScrollX() {
-  const ret = window.scrollX || window.pageXOffset || document.documentElement.scrollLeft;
-  return ret;
-}
-
-function getWindowScrollY() {
-  const ret = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-  return ret;
-}
 
 function preventEvent(e) {
   e.preventManipulation && e.preventManipulation(); // ie10

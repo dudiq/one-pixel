@@ -4,6 +4,7 @@ import {
   identity,
   inverse,
   transform,
+  rotateDEG,
   compose,
   applyToPoint,
   toCSS,
@@ -42,6 +43,12 @@ export default class TransformsCtrl {
       scale: 1,
     };
 
+    this.metaRotate = {
+      rotate: 0,
+      x: 1,
+      y: 1,
+    };
+
     this.limitations = {
       scale: {
         min: 0.3,
@@ -58,7 +65,8 @@ export default class TransformsCtrl {
       h: 0,
     };
 
-    this.setMatrix(identity(), 1);
+    this.setMatrix(identity());
+    this.updateMeta(1);
   }
 
   init() {
@@ -113,19 +121,25 @@ export default class TransformsCtrl {
     return this.metaScale.scale;
   }
 
+  rotate(val) {
+    if (val === undefined) return this.metaScale.rotate;
+
+    const offset = this.metaOffset;
+    this.transform(offset.x, offset.y, this.metaScale.scale, val);
+    return this.metaScale.rotate;
+  }
+
   /**
    * @private
    * @param matrix
-   * @param scaleVal
    */
-  setMatrix(matrix, scaleVal) {
+  setMatrix(matrix) {
     this.matrix = matrix;
     this.inverse = inverse(this.matrix);
     const levels = this.context.canvasLevel.getLevels();
     for (let i = 0, l = levels.length; i < l; i++) {
       levels[i].canvas.setTransform(matrix);
     }
-    this.updateMeta(scaleVal);
   }
 
   isOffsetCorrect(matrix) {
@@ -163,8 +177,8 @@ export default class TransformsCtrl {
    * @private
    * @param {number} scaleVal
    */
-  updateMeta(scaleVal) {
-    const po = applyToPoint(this.matrix, [0, 0]);
+  updateMeta(matrix, scaleVal) {
+    const po = applyToPoint(matrix, [0, 0]);
     po[0] = Math.floor(po[0] * 10) / 10;
     po[1] = Math.floor(po[1] * 10) / 10;
 
@@ -192,11 +206,15 @@ export default class TransformsCtrl {
 
     const svgPoint = getSVGPoint(this.matrix, cx, cy);
 
+    const nx = dx * this.metaRotate.cos - dy * this.metaRotate.sin;
+    const ny = dx * this.metaRotate.sin + dy * this.metaRotate.cos;
+    // console.log(nx, dx, 'n, d, :y', ny, dy);
+
     const matrix = transform(
       fromObject(this.matrix),
 
       scale(1 / oldScale),
-      translate(dx, dy),
+      translate(nx, ny),
       scale(oldScale),
 
       translate(svgPoint.x, svgPoint.y),
@@ -207,7 +225,8 @@ export default class TransformsCtrl {
     const isOffsetCorrect = this.isOffsetCorrect(matrix);
     if (!isOffsetCorrect) return;
 
-    this.setMatrix(matrix, scaleVal);
+    this.setMatrix(matrix);
+    this.updateMeta(matrix, scaleVal);
   }
 
   /**
@@ -216,15 +235,32 @@ export default class TransformsCtrl {
    * @param {number} y
    * @param {number} scaleVal
    */
-  transform(x, y, scaleVal) {
+  transform(x, y, scaleVal, angleDeg = this.metaRotate.rotate) {
+    if (angleDeg >= 360) {
+      angleDeg -= 360;
+    }
     scaleVal = this.getFloorScale(scaleVal);
 
+    const availableBbox = this.availableBbox;
+
+    const cx = availableBbox.maxx / 2;
+    const cy = availableBbox.maxy / 2;
+
     const matrix = compose(translate(x, y), scale(scaleVal));
+
+    const rotateMatrix = compose(matrix, rotateDEG(angleDeg, cx, cy));
 
     const isOffsetCorrect = this.isOffsetCorrect(matrix);
     if (!isOffsetCorrect) return;
 
-    this.setMatrix(matrix, scaleVal);
+    this.metaRotate.cos = Math.round(Math.cos(-angleDeg * (Math.PI / 180)));
+    this.metaRotate.sin = Math.round(Math.sin(-angleDeg * (Math.PI / 180)));
+    this.metaRotate.rotate = angleDeg;
+
+    console.log(this.metaRotate);
+
+    this.setMatrix(rotateMatrix);
+    this.updateMeta(matrix, scaleVal);
   }
 
   fitToScreen() {
