@@ -18,8 +18,6 @@ const getSVGPoint = (value, viewerX, viewerY) => {
   return applyToPoint(inverseMatrix, { x: viewerX, y: viewerY });
 };
 
-const DX_CHANGE = 1000;
-
 export default class TransformsCtrl {
   constructor(context) {
     this.context = context;
@@ -50,7 +48,7 @@ export default class TransformsCtrl {
 
     this.limitations = {
       scale: {
-        min: 0.3,
+        min: 0.1,
         max: 3.5,
       },
     };
@@ -65,7 +63,6 @@ export default class TransformsCtrl {
     };
 
     this.setMatrix(identity());
-    this.updateMeta(1);
   }
 
   init() {
@@ -137,7 +134,7 @@ export default class TransformsCtrl {
     }
   }
 
-  isOffsetCorrect(matrix) {
+  isAbleToApplyMatrix(matrix) {
     const availableBbox = this.availableBbox;
     const container = this.context.container;
     const w = container.getWidth();
@@ -152,11 +149,15 @@ export default class TransformsCtrl {
       y: availableBbox.maxy,
     });
 
-    if (leftTop.x < -DX_CHANGE) return false;
-    if (rightBottom.x > w + DX_CHANGE) return false;
+    const isBottomGone = leftTop.y > h;
+    const isTopGone = rightBottom.y < 0;
+    const isRightGone = leftTop.x > w;
+    const isLeftGone = rightBottom.x < 0;
 
-    if (leftTop.y < -DX_CHANGE) return false;
-    if (rightBottom.y > h + DX_CHANGE) return false;
+    const isAreaGoneFromScreen = isBottomGone || isTopGone || isRightGone || isLeftGone;
+
+    if (isAreaGoneFromScreen) return false;
+
     return true;
   }
 
@@ -208,8 +209,8 @@ export default class TransformsCtrl {
       translate(-svgPoint.x, -svgPoint.y),
     );
 
-    const isOffsetCorrect = this.isOffsetCorrect(matrix);
-    if (!isOffsetCorrect) return;
+    const isAbleToApplyMatrix = this.isAbleToApplyMatrix(matrix);
+    if (!isAbleToApplyMatrix) return;
 
     this.setMatrix(matrix);
     this.updateMeta(matrix, scaleVal);
@@ -236,8 +237,8 @@ export default class TransformsCtrl {
 
     const rotateMatrix = compose(matrix, rotateDEG(angleDeg, cx, cy));
 
-    const isOffsetCorrect = this.isOffsetCorrect(matrix);
-    if (!isOffsetCorrect) return;
+    const isAbleToApplyMatrix = this.isAbleToApplyMatrix(matrix);
+    if (!isAbleToApplyMatrix) return;
 
     this.metaRotate.cos = Math.round(Math.cos(-angleDeg * (Math.PI / 180)));
     this.metaRotate.sin = Math.round(Math.sin(-angleDeg * (Math.PI / 180)));
@@ -259,6 +260,7 @@ export default class TransformsCtrl {
     const newScaleY = h / modelH;
     let newScale = Math.min(newScaleX, newScaleY);
     newScale = this.getFloorScale(newScale);
+
     if (newScale) {
       this.scale(1);
       this.offset(0, 0);
