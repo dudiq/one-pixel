@@ -165,17 +165,12 @@
     instance.context.renderCtrl.render();
   });
 
-  let scale = 1;
   document.querySelector('#zoomin').addEventListener('click', () => {
-    scale += 0.1;
-    instance.context.transformCtrl.scale(scale);
-    instance.context.renderCtrl.render();
+    instance.zoomDelta(0.5);
   });
 
   document.querySelector('#zoomout').addEventListener('click', () => {
-    scale -= 0.1;
-    instance.context.transformCtrl.scale(scale);
-    instance.context.renderCtrl.render();
+    instance.zoomDelta(-0.5);
   });
 
   const offset = {

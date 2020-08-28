@@ -76,6 +76,25 @@ export default class OnePixel {
     this.context.renderCtrl.render();
   }
 
+  zoomDelta(delta) {
+    const scale = this.context.transformCtrl.scale();
+
+    const container = this.context.container;
+    const w = container.getWidth();
+    const h = container.getHeight();
+
+    const newScale = scale - delta;
+    this.context.transformCtrl.transformByCenter(
+      0,
+      0,
+      w / 2,
+      h / 2,
+      newScale / scale,
+    );
+
+    this.context.renderCtrl.render();
+  }
+
   render() {
     // wait images loaded
     if (!this.context.images.isLoaded) {
