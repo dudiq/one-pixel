@@ -1,6 +1,6 @@
 {
   "name": "one-pixel-2d",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./core.umd.js",
   "module": "./core.esm.js",
   "description": "one pixel 2d engine for simple drawings",

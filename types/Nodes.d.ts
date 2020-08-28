@@ -10,6 +10,7 @@ type NodeBase = {
 
 type NodeLine = NodeBase | {
   c: string; // color
+  cs: string; // sub color
 };
 
 type NodeImage = NodeBase | {

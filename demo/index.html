@@ -100,7 +100,9 @@
     const res = new Pixel({
       container: '#place',
       penColor: '#ff5b5b',
-      penWidth: 3,
+      penSubColor: '#fff',
+      penWidth: 2,
+      penSubWidth: 3,
       eraseWidth: 8,
       area: {
         width: 2000,
@@ -154,12 +156,12 @@
   const rotateAngle = 90;
   document.querySelector('#rotate-right').addEventListener('click', () => {
     rotate += rotateAngle;
-    instance.context.transformCtrl.rotate(rotate);
+    instance.rotate(rotate);
     instance.context.renderCtrl.render();
   });
   document.querySelector('#rotate-left').addEventListener('click', () => {
     rotate -= rotateAngle;
-    instance.context.transformCtrl.rotate(rotate);
+    instance.rotate(rotate);
     instance.context.renderCtrl.render();
   });
 

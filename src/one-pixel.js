@@ -71,6 +71,11 @@ export default class OnePixel {
     this.context.nodes.setNodes(nodes);
   }
 
+  rotate(angle) {
+    this.context.transformCtrl.rotate(angle);
+    this.context.renderCtrl.render();
+  }
+
   render() {
     // wait images loaded
     if (!this.context.images.isLoaded) {

@@ -1,6 +1,6 @@
 import BaseTool from './BaseTool';
 
-export default class EraseTool extends BaseTool {
+export default class MoveTool extends BaseTool {
   constructor(context, editor) {
     super(context, editor);
     this.config = context.config;
